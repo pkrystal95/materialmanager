@@ -1,6 +1,9 @@
 package com.example.materialmanager.domain;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Lecture {
@@ -9,18 +12,28 @@ public class Lecture {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;     // 반드시 선언
-    private String teacher;  // 반드시 선언
+    private String title;             // 강의 제목
+    private LocalDate lectureDate;    // 수업 날짜
+    private String content;           // 수업 내용
+
+    @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL)
+    private List<Material> materials = new ArrayList<>();
 
     public Lecture() {}
 
-    // getter / setter
+    // Getter / Setter
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
-    public String getTeacher() { return teacher; }
-    public void setTeacher(String teacher) { this.teacher = teacher; }
+    public LocalDate getLectureDate() { return lectureDate; }
+    public void setLectureDate(LocalDate lectureDate) { this.lectureDate = lectureDate; }
+
+    public String getContent() { return content; }
+    public void setContent(String content) { this.content = content; }
+
+    public List<Material> getMaterials() { return materials; }
+    public void setMaterials(List<Material> materials) { this.materials = materials; }
 }

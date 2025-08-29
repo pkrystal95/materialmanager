@@ -23,11 +23,8 @@ public class MaterialController {
         this.lectureService = lectureService;
     }
 
-    // 자료 목록
     @GetMapping
-    public String list(@RequestParam(required = false) Long lectureId,
-                       HttpSession session,
-                       Model model) {
+    public String list(@RequestParam(required = false) Long lectureId, HttpSession session, Model model) {
         if (session.getAttribute("loginUser") == null) {
             return "redirect:/auth/login";
         }
@@ -40,7 +37,6 @@ public class MaterialController {
         return "material/list";
     }
 
-    // 자료 등록 폼
     @GetMapping("/form")
     public String form(Model model) {
         model.addAttribute("material", new Material());
@@ -49,7 +45,6 @@ public class MaterialController {
         return "material/form";
     }
 
-    // 자료 등록 처리
     @PostMapping("/form")
     public String submit(@Valid @ModelAttribute Material material,
                          BindingResult bindingResult,
@@ -62,8 +57,12 @@ public class MaterialController {
             return "material/form";
         }
 
-        Long lectureId = material.getLecture().getId();
-        lectureService.findById(lectureId)
+        if (material.getLecture() == null || material.getLecture().getId() == null) {
+            bindingResult.rejectValue("lecture", "invalid", "강의를 선택해주세요.");
+            return "material/form";
+        }
+
+        lectureService.findById(material.getLecture().getId())
                 .ifPresentOrElse(
                         lecture -> material.setLecture(lecture),
                         () -> bindingResult.rejectValue("lecture", "invalid", "선택한 강의가 존재하지 않습니다.")
@@ -74,7 +73,7 @@ public class MaterialController {
         }
 
         materialService.save(material);
-        return "redirect:/materials?lectureId=" + lectureId;
+        return "redirect:/materials?lectureId=" + material.getLecture().getId();
     }
 
     @GetMapping("/delete/{id}")

@@ -26,7 +26,6 @@ public class Material {
     @NotNull(message = "강의를 선택해주세요.")
     private Lecture lecture;
 
-    // 기본 생성자
     public Material() {}
 
     // Getter / Setter

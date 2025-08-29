@@ -8,7 +8,7 @@
 
 <h1>자료 등록</h1>
 
-<form th:object="${material}" th:action="@{/materials/form}" method="post">
+<form th:action="@{/materials/form}" th:object="${material}" method="post">
   <label>제목:</label>
   <input type="text" th:field="*{title}"/>
   <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
@@ -25,11 +25,11 @@
 
   <label>강의:</label>
   <select th:field="*{lecture.id}">
-    <option th:each="lec : ${lectures}" th:value="${lec.id}" th:text="${lec.name}"></option>
+    <option th:each="lec : ${lectures}" th:value="${lec.id}" th:text="${lec.title}"></option>
   </select>
   <div th:if="${#fields.hasErrors('lecture')}" th:errors="*{lecture}"></div>
 
-  <button type="submit">등록</button>
+  <button type="submit">저장</button>
 </form>
 
 </body>

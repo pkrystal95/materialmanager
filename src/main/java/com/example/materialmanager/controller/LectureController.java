@@ -1,13 +1,13 @@
 package com.example.materialmanager.controller;
 
 import com.example.materialmanager.domain.Lecture;
-import com.example.materialmanager.domain.Material;
 import com.example.materialmanager.service.LectureService;
-import com.example.materialmanager.service.MaterialService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/lectures")
@@ -20,24 +20,48 @@ public class LectureController {
     }
 
     @GetMapping
-    public String list(HttpSession session, Model model) {
-        // 로그인 여부 확인
+    public String list(@RequestParam(required = false) String date, HttpSession session, Model model) {
         if (session.getAttribute("loginUser") == null) {
             return "redirect:/auth/login";
         }
 
-        model.addAttribute("lectures", lectureService.findAll());
+        List<Lecture> lectures;
+        if (date != null && !date.isEmpty()) {
+            lectures = lectureService.findByDate(java.time.LocalDate.parse(date));
+        } else {
+            lectures = lectureService.findAll();
+        }
+        model.addAttribute("lectures", lectures);
         return "lecture/list";
     }
 
     @GetMapping("/form")
     public String form(Model model) {
-        model.addAttribute("lecture", new Lecture()); // th:object 용
+        model.addAttribute("lecture", new Lecture());
         return "lecture/form";
     }
 
     @PostMapping("/form")
     public String submit(@ModelAttribute Lecture lecture) {
+        lectureService.save(lecture);
+        return "redirect:/lectures";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editForm(@PathVariable Long id, Model model) {
+        Lecture lecture = lectureService.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Lecture not found"));
+        model.addAttribute("lecture", lecture);
+        return "lecture/form";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String editSubmit(@PathVariable Long id, @ModelAttribute Lecture updatedLecture) {
+        Lecture lecture = lectureService.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Lecture not found"));
+        lecture.setTitle(updatedLecture.getTitle());
+        lecture.setLectureDate(updatedLecture.getLectureDate());
+        lecture.setContent(updatedLecture.getContent());
         lectureService.save(lecture);
         return "redirect:/lectures";
     }
