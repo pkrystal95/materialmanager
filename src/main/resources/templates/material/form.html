@@ -11,17 +11,35 @@
 <h1>자료 등록</h1>
 
 <form th:action="@{/materials/form}" th:object="${material}" method="post">
-  <p>자료명: <input type="text" th:field="*{title}" required /></p>
-  <p>URL: <input type="text" th:field="*{url}" required /></p>
+  <p>자료명: <input type="text" th:field="*{title}" />
+    <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+  </p>
+
+  <p>URL: <input type="text" th:field="*{url}" />
+    <span th:if="${#fields.hasErrors('url')}" th:errors="*{url}"></span>
+  </p>
+
+  <p>자료 타입:
+    <select th:field="*{type}">
+      <option th:each="type : ${T(com.example.materialmanager.domain.MaterialType).values()}"
+              th:value="${type}" th:text="${type}"></option>
+    </select>
+    <span th:if="${#fields.hasErrors('type')}" th:errors="*{type}"></span>
+  </p>
+
   <p>강의:
     <select th:field="*{lecture.id}">
       <option th:each="lec : ${lectures}"
               th:value="${lec.id}"
               th:text="${lec.name}"></option>
     </select>
+    <span th:if="${#fields.hasErrors('lecture')}" th:errors="*{lecture}"></span>
   </p>
+
   <button type="submit">등록</button>
 </form>
+
+
 
 
 <div th:replace="_fragments/footer :: footer"></div>

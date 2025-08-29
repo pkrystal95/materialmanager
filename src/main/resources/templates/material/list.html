@@ -9,7 +9,6 @@
 
 <h1>자료 목록</h1>
 
-<!-- 자료 등록 버튼 -->
 <p>
   <a th:href="@{/materials/form}">자료 등록</a>
 </p>
@@ -19,6 +18,7 @@
   <tr>
     <th>번호</th>
     <th>자료명</th>
+    <th>자료 타입</th>
     <th>강의</th>
     <th>URL</th>
     <th>삭제</th>
@@ -28,6 +28,7 @@
   <tr th:each="material, iterStat : ${materials}">
     <td th:text="${iterStat.count}"></td>
     <td th:text="${material.title}"></td>
+    <td th:text="${material.type}"></td>
     <td th:text="${material.lecture.name}"></td>
     <td>
       <a th:href="${material.url}" target="_blank">바로가기</a>
@@ -38,6 +39,7 @@
   </tr>
   </tbody>
 </table>
+
 
 <div th:replace="_fragments/footer :: footer"></div>
 </body>

@@ -3,8 +3,10 @@ package com.example.materialmanager.controller;
 import com.example.materialmanager.domain.Material;
 import com.example.materialmanager.service.LectureService;
 import com.example.materialmanager.service.MaterialService;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -31,19 +33,33 @@ public class MaterialController {
 
     @GetMapping("/form")
     public String form(Model model) {
-        model.addAttribute("material", new Material());           // th:object용
-        model.addAttribute("lectures", lectureService.findAll()); // select box용
+        model.addAttribute("material", new Material());
+        model.addAttribute("lectures", lectureService.findAll());
         return "material/form";
     }
 
     @PostMapping("/form")
-    public String submit(@ModelAttribute Material material) {
-        // select box에서 넘어온 lecture.id로 실제 Lecture 객체 설정
+    public String submit(@Valid @ModelAttribute Material material,
+                         BindingResult bindingResult,
+                         Model model) {
+
+        model.addAttribute("lectures", lectureService.findAll());
+
+        if (bindingResult.hasErrors()) {
+            return "material/form";
+        }
+
         Long lectureId = material.getLecture().getId();
-        material.setLecture(
-                lectureService.findById(lectureId)
-                        .orElseThrow(() -> new IllegalArgumentException("Lecture not found"))
-        );
+        lectureService.findById(lectureId)
+                .ifPresentOrElse(
+                        lecture -> material.setLecture(lecture),
+                        () -> bindingResult.rejectValue("lecture", "invalid", "선택한 강의가 존재하지 않습니다.")
+                );
+
+        if (bindingResult.hasErrors()) {
+            return "material/form";
+        }
+
         materialService.save(material);
         return "redirect:/materials?lectureId=" + lectureId;
     }
