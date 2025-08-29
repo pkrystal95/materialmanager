@@ -43,12 +43,12 @@
       * {
         font-family: "NoonnuBasicGothic", Arial, sans-serif !important;
       }
-      
+
       body {
         background-color: #fafbfc;
         line-height: 1.6;
       }
-      
+
       /* Modern Card Design */
       .card {
         border: none !important;
@@ -74,7 +74,7 @@
         background-color: var(--bs-gray-100) !important;
         border-top: 1px solid var(--bs-gray-200) !important;
       }
-      
+
       /* Enhanced Buttons */
       .btn {
         border-radius: 8px !important;
@@ -107,7 +107,7 @@
       .btn:focus {
         box-shadow: 0 0 0 0.25rem rgba(255, 96, 0, 0.25) !important;
       }
-      
+
       /* Modern Form Controls */
       .form-control,
       .form-select {
@@ -122,7 +122,7 @@
         border-color: #ff6000 !important;
         box-shadow: 0 0 0 0.25rem rgba(255, 96, 0, 0.1) !important;
       }
-      
+
       /* Enhanced Badges */
       .badge {
         border-radius: 6px !important;
@@ -130,7 +130,7 @@
         font-weight: 500;
         font-size: 0.875em;
       }
-      
+
       /* Modern Navbar */
       .navbar {
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08) !important;
@@ -155,7 +155,25 @@
         color: #ff6000 !important;
         background-color: rgba(255, 96, 0, 0.05);
       }
-      
+
+      /* Minimal design utilities */
+      .badge-outline {
+        background-color: #fff !important;
+        color: #000 !important;
+        border: 1px solid rgba(0, 0, 0, 0.12) !important;
+      }
+      .badge-outline-primary {
+        background-color: #fff !important;
+        color: #ff6000 !important;
+        border: 1px solid #ff6000 !important;
+      }
+      .table-hover tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.02) !important;
+      }
+      .row-pending {
+        border-left: 3px solid #ff6000;
+      }
+
       /* Global Search Bar */
       .search-container {
         position: relative;
@@ -183,7 +201,7 @@
         color: var(--bs-gray-500);
         font-size: 1.1rem;
       }
-      
+
       /* Alert Improvements */
       .alert {
         border: none !important;
@@ -192,26 +210,42 @@
         border-left: 4px solid transparent !important;
       }
       .alert-success {
-        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%) !important;
+        background: linear-gradient(
+          135deg,
+          #d4edda 0%,
+          #c3e6cb 100%
+        ) !important;
         color: #0f5132 !important;
         border-left-color: #198754 !important;
       }
       .alert-info {
-        background: linear-gradient(135deg, #cff4fc 0%, #b6f0fc 100%) !important;
+        background: linear-gradient(
+          135deg,
+          #cff4fc 0%,
+          #b6f0fc 100%
+        ) !important;
         color: #055160 !important;
         border-left-color: #0dcaf0 !important;
       }
       .alert-warning {
-        background: linear-gradient(135deg, #fff3cd 0%, #ffecb5 100%) !important;
+        background: linear-gradient(
+          135deg,
+          #fff3cd 0%,
+          #ffecb5 100%
+        ) !important;
         color: #664d03 !important;
         border-left-color: #ffc107 !important;
       }
       .alert-primary {
-        background: linear-gradient(135deg, rgba(255, 96, 0, 0.1) 0%, rgba(255, 96, 0, 0.05) 100%) !important;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 96, 0, 0.1) 0%,
+          rgba(255, 96, 0, 0.05) 100%
+        ) !important;
         color: #ff6000 !important;
         border-left-color: #ff6000 !important;
       }
-      
+
       /* Utility Classes */
       .bg-brand-soft {
         background-color: var(--bs-primary-bg-subtle) !important;
@@ -222,12 +256,12 @@
       .text-brand-emphasis {
         color: var(--bs-primary-text-emphasis) !important;
       }
-      
+
       /* Container & Spacing */
       .container {
         max-width: 1200px;
       }
-      
+
       /* Responsive Improvements */
       @media (max-width: 768px) {
         .card {
@@ -287,9 +321,12 @@
                 >
               </li>
             </ul>
-            
+
             <!-- Global Search Bar -->
-            <div class="search-container me-3" th:if="${session.loginUser != null}">
+            <div
+              class="search-container me-3"
+              th:if="${session.loginUser != null}"
+            >
               <form th:action="@{/search}" method="get" class="d-flex">
                 <input
                   class="form-control global-search"
@@ -337,9 +374,14 @@
     </header>
 
     <!-- Footer -->
-    <footer th:fragment="footer" class="mt-auto bg-white text-center py-4 border-top">
+    <footer
+      th:fragment="footer"
+      class="mt-auto bg-white text-center py-4 border-top"
+    >
       <div class="container">
-        <p class="text-muted mb-0">&copy; 2025 CLD4 Archive. 멋쟁이사자처럼 클라우드 엔지니어링 4기</p>
+        <p class="text-muted mb-0">
+          &copy; 2025 CLD4 Archive. 멋쟁이사자처럼 클라우드 엔지니어링 4기
+        </p>
       </div>
     </footer>
 

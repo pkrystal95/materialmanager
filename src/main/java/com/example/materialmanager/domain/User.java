@@ -27,6 +27,12 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    // 승인 여부 (ADMIN 제외, STUDENT/TEACHER는 승인 필요)
+    @Column(nullable = false)
+    private boolean approved = false;
+
+    private LocalDateTime approvedAt;
+
     private LocalDateTime createdAt;
 
     public User(String name, String email, String password, Role role) {

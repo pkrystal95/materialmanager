@@ -31,6 +31,12 @@ public class AuthController {
             return "auth/login";
         }
 
+        // 승인되지 않은 사용자(ADMIN 제외)는 로그인 불가
+        if (user.getRole() != Role.ADMIN && !user.isApproved()) {
+            model.addAttribute("loginError", "관리자 승인이 필요합니다. 승인 후 로그인 가능합니다.");
+            return "auth/login";
+        }
+
         session.setAttribute("loginUser", user);
         return "redirect:/";
     }
@@ -50,7 +56,9 @@ public class AuthController {
         }
 
         userService.save(user);
-        return "redirect:/auth/login";
+        // 승인 대기 안내를 위해 플래그 전달
+        boolean pending = user.getRole() != Role.ADMIN;
+        return pending ? "redirect:/auth/login?pending=true" : "redirect:/auth/login";
     }
 
     @GetMapping("/logout")

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_fragments/layout :: head('승인 대기 - CLD4 Archive')">
+  <title>승인 대기 - CLD4 Archive</title>
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+  
+  <main class="container-fluid d-flex align-items-center justify-content-center flex-grow-1">
+    <div class="row w-100 justify-content-center">
+      <div class="col-md-8 col-lg-6 col-xl-5">
+        <div class="card border-0 shadow-lg">
+          <div class="card-body p-5 text-center">
+            
+            <!-- 대기 아이콘 -->
+            <div class="mb-4">
+              <div class="approval-icon">
+                <i class="bi bi-clock-history display-3 text-warning"></i>
+                <div class="icon-overlay">
+                  <i class="bi bi-person-check text-primary"></i>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 메인 메시지 -->
+            <div class="mb-4">
+              <h2 class="h3 mb-3 text-dark">승인 대기 중입니다</h2>
+              <p class="text-muted mb-4 lh-lg">
+                안녕하세요, <strong class="text-primary" th:text="${user.name}">사용자</strong>님!<br>
+                회원가입을 완료해 주셔서 감사합니다.
+              </p>
+            </div>
+            
+            <!-- 승인 정보 카드 -->
+            <div class="approval-info-card p-4 mb-4">
+              <div class="row g-3 text-start">
+                <div class="col-12">
+                  <div class="d-flex align-items-center mb-2">
+                    <i class="bi bi-person-circle me-2 text-muted"></i>
+                    <strong>계정 정보</strong>
+                  </div>
+                  <div class="ms-4">
+                    <div class="mb-1">
+                      <small class="text-muted">이름:</small> 
+                      <span th:text="${user.name}">이름</span>
+                    </div>
+                    <div class="mb-1">
+                      <small class="text-muted">이메일:</small> 
+                      <span th:text="${user.email}">이메일</span>
+                    </div>
+                    <div class="mb-1">
+                      <small class="text-muted">역할:</small>
+                      <span th:switch="${user.role.name()}" class="badge role-badge ms-1">
+                        <span th:case="'TEACHER'" class="badge bg-warning text-dark">👨‍🏫 강사</span>
+                        <span th:case="'STUDENT'" class="badge bg-primary">👨‍🎓 훈련생</span>
+                      </span>
+                    </div>
+                    <div>
+                      <small class="text-muted">가입일:</small> 
+                      <span th:text="${#temporals.format(user.createdAt, 'yyyy년 MM월 dd일 HH:mm')}">가입일</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 안내 메시지 -->
+            <div class="alert alert-info border-0 mb-4">
+              <div class="d-flex align-items-start">
+                <i class="bi bi-info-circle-fill me-2 mt-1"></i>
+                <div class="text-start">
+                  <strong>승인 절차 안내</strong>
+                  <ul class="mb-0 mt-2 ps-3">
+                    <li>관리자가 계정을 검토하고 승인합니다</li>
+                    <li>승인까지 보통 <strong>1-2 영업일</strong> 소요됩니다</li>
+                    <li>승인 완료 시 이메일로 알림을 받게 됩니다</li>
+                    <li>문의사항은 관리자에게 연락해 주세요</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 저작권 안내 -->
+            <div class="copyright-notice p-3 mb-4">
+              <div class="d-flex align-items-start">
+                <i class="bi bi-shield-lock-fill me-2 mt-1 text-warning"></i>
+                <div class="text-start">
+                  <h6 class="mb-2">저작권 보호 시스템</h6>
+                  <small class="text-muted lh-sm">
+                    본 시스템은 저작권이 있는 교육 자료를 보호하기 위해 
+                    관리자의 승인을 통해서만 접근이 가능합니다.
+                  </small>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 액션 버튼 -->
+            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+              <a th:href="@{/auth/logout}" class="btn btn-outline-secondary">
+                <i class="bi bi-box-arrow-left me-1"></i>로그아웃
+              </a>
+              <button class="btn btn-primary" onclick="window.location.reload()">
+                <i class="bi bi-arrow-clockwise me-1"></i>상태 확인
+              </button>
+            </div>
+            
+          </div>
+        </div>
+        
+        <!-- 연락처 정보 -->
+        <div class="text-center mt-4">
+          <small class="text-muted">
+            문의사항이 있으시면 <strong>관리자</strong>에게 연락해 주세요
+          </small>
+        </div>
+        
+      </div>
+    </div>
+  </main>
+
+  <div th:replace="_fragments/layout :: scripts"></div>
+  
+  <style>
+    /* 승인 대기 페이지 스타일 */
+    .approval-icon {
+      position: relative;
+      display: inline-block;
+    }
+    .icon-overlay {
+      position: absolute;
+      bottom: -5px;
+      right: -5px;
+      background: white;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .icon-overlay i {
+      font-size: 1.2rem;
+    }
+    
+    .approval-info-card {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border-radius: 12px;
+      border: 1px solid #dee2e6;
+    }
+    
+    .copyright-notice {
+      background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+      border-radius: 12px;
+      border: 1px solid #ffc107;
+    }
+    
+    .role-badge {
+      font-size: 0.8rem;
+      padding: 0.3rem 0.6rem;
+    }
+    
+    .card {
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    
+    .alert-info {
+      background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+      color: #0c5460;
+    }
+    
+    /* 애니메이션 */
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    .approval-icon {
+      animation: pulse 2s infinite;
+    }
+    
+    /* 반응형 */
+    @media (max-width: 576px) {
+      .card-body {
+        padding: 2rem 1.5rem !important;
+      }
+      .approval-info-card,
+      .copyright-notice {
+        padding: 1rem !important;
+      }
+    }
+  </style>
+</body>
+</html>

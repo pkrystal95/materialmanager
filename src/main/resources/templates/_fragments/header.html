@@ -27,7 +27,7 @@
       * {
         font-family: "NoonnuBasicGothic", Arial, sans-serif !important;
       }
-      
+
       :root {
         --bs-primary: #ff6000;
         --bs-primary-rgb: 255, 96, 0;
@@ -84,6 +84,23 @@
         --bs-btn-hover-border-color: #ff6000;
         --bs-btn-active-bg: #e25700;
         --bs-btn-active-border-color: #e25700;
+      }
+      /* Minimal design utilities (shared) */
+      .badge-outline {
+        background-color: #fff !important;
+        color: #000 !important;
+        border: 1px solid rgba(0, 0, 0, 0.12) !important;
+      }
+      .badge-outline-primary {
+        background-color: #fff !important;
+        color: #ff6000 !important;
+        border: 1px solid #ff6000 !important;
+      }
+      .table-hover tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.02) !important;
+      }
+      .row-pending {
+        border-left: 3px solid #ff6000;
       }
       /* Navbar brand: consistent weight/color */
       .navbar .navbar-brand {

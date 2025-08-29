@@ -9,8 +9,8 @@
     <main class="container mt-4 flex-grow-1">
       <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
-          <div class="card shadow">
-            <div class="card-header bg-info text-white">
+          <div class="card">
+            <div class="card-header bg-white border-bottom">
               <h1 class="h4 mb-0">
                 <i class="bi bi-person-lines-fill"></i> 사용자 상세
               </h1>
@@ -64,18 +64,18 @@
                 </div>
                 <div class="col-8">
                   <span th:switch="${user.role.name()}" class="badge fs-6">
-                    <span th:case="'ADMIN'" class="badge bg-danger"
+                    <span th:case="'ADMIN'" class="badge badge-outline"
                       >👑 관리자</span
                     >
-                    <span th:case="'TEACHER'" class="badge bg-warning"
+                    <span th:case="'TEACHER'" class="badge badge-outline"
                       >👨‍🏫 강사</span
                     >
-                    <span th:case="'STUDENT'" class="badge bg-primary"
+                    <span th:case="'STUDENT'" class="badge badge-outline"
                       >👨‍🎓 학생</span
                     >
                     <span
                       th:case="*"
-                      class="badge bg-secondary"
+                      class="badge badge-outline"
                       th:text="${user.role}"
                       >역할</span
                     >
@@ -98,13 +98,59 @@
                 </div>
               </div>
 
+              <div class="row mb-4">
+                <div class="col-4">
+                  <strong class="text-muted">
+                    <i class="bi bi-patch-check"></i> 승인 상태
+                  </strong>
+                </div>
+                <div class="col-8">
+                  <span
+                    th:if="${user.role.name() == 'ADMIN'}"
+                    class="badge bg-secondary"
+                    >-</span
+                  >
+                  <span th:if="${user.role.name() != 'ADMIN'}">
+                    <span th:if="${user.approved}" class="badge bg-primary"
+                      >승인됨</span
+                    >
+                    <span
+                      th:unless="${user.approved}"
+                      class="badge bg-secondary"
+                      >대기</span
+                    >
+                    <small
+                      class="text-muted ms-2"
+                      th:if="${user.approvedAt != null}"
+                    >
+                      <i class="bi bi-clock"></i>
+                      <span
+                        th:text="${#temporals.format(user.approvedAt, 'yyyy-MM-dd HH:mm')}"
+                        >-</span
+                      >
+                    </small>
+                  </span>
+                </div>
+              </div>
+
               <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <a
-                  th:href="@{/users}"
-                  class="btn btn-outline-secondary me-md-2"
-                >
+                <a th:href="@{/users}" class="btn btn-outline-primary me-md-2">
                   <i class="bi bi-arrow-left"></i> 목록으로
                 </a>
+                <form
+                  th:action="@{'/users/approve/' + ${user.id}}"
+                  method="post"
+                  th:if="${user.role.name() != 'ADMIN' and !user.approved}"
+                  class="d-inline"
+                >
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    onclick="return confirm('승인하시겠습니까?');"
+                  >
+                    <i class="bi bi-check2-circle"></i> 승인
+                  </button>
+                </form>
                 <a
                   th:href="@{'/users/edit/' + ${user.id}}"
                   class="btn btn-primary"

@@ -20,6 +20,16 @@
               </div>
 
               <div
+                th:if="${param.pending}"
+                class="alert alert-primary"
+                role="alert"
+              >
+                <i class="bi bi-hourglass-split"></i>
+                회원가입 신청이 완료되었습니다. 관리자 승인 후 로그인할 수
+                있습니다.
+              </div>
+
+              <div
                 th:if="${loginError}"
                 class="alert alert-danger"
                 role="alert"

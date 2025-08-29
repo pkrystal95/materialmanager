@@ -1,5 +1,6 @@
 package com.example.materialmanager.service;
 
+import com.example.materialmanager.domain.Role;
 import com.example.materialmanager.domain.User;
 import com.example.materialmanager.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,19 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public List<User> searchAll(String q) {
+        if (q == null || q.isBlank()) return findAll();
+        return userRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(q, q);
+    }
+
+    public List<User> findByApproved(boolean approved) {
+        return userRepository.findByApproved(approved);
+    }
+
+    public long countApproved(boolean approved) {
+        return userRepository.countByApproved(approved);
+    }
+
     // id로 사용자 조회
     public Optional<User> findById(Long id) {
         return userRepository.findById(id);
@@ -36,6 +50,13 @@ public class UserService {
     public void save(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
+        }
+        // ADMIN 은 즉시 승인, 나머지는 승인 대기
+        if (user.getRole() == Role.ADMIN) {
+            user.setApproved(true);
+            user.setApprovedAt(java.time.LocalDateTime.now());
+        } else {
+            user.setApproved(false);
         }
         userRepository.save(user);
     }
@@ -54,5 +75,14 @@ public class UserService {
     // 사용자 삭제
     public void delete(Long id) {
         userRepository.deleteById(id);
+    }
+
+    // 승인 처리
+    public void approve(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        user.setApproved(true);
+        user.setApprovedAt(java.time.LocalDateTime.now());
+        userRepository.save(user);
     }
 }
