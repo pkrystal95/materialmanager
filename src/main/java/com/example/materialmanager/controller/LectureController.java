@@ -4,6 +4,7 @@ import com.example.materialmanager.domain.Lecture;
 import com.example.materialmanager.domain.Material;
 import com.example.materialmanager.service.LectureService;
 import com.example.materialmanager.service.MaterialService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,12 @@ public class LectureController {
     }
 
     @GetMapping
-    public String list(Model model) {
+    public String list(HttpSession session, Model model) {
+        // 로그인 여부 확인
+        if (session.getAttribute("loginUser") == null) {
+            return "redirect:/auth/login";
+        }
+
         model.addAttribute("lectures", lectureService.findAll());
         return "lecture/list";
     }

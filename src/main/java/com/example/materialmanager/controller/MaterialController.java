@@ -3,6 +3,7 @@ package com.example.materialmanager.controller;
 import com.example.materialmanager.domain.Material;
 import com.example.materialmanager.service.LectureService;
 import com.example.materialmanager.service.MaterialService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +23,12 @@ public class MaterialController {
     }
 
     @GetMapping
-    public String list(@RequestParam(required = false) Long lectureId, Model model) {
+    public String list(@RequestParam(required = false) Long lectureId, HttpSession session, Model model) {
+        // 로그인 여부 확인
+        if (session.getAttribute("loginUser") == null) {
+            return "redirect:/auth/login";
+        }
+
         if (lectureId != null) {
             model.addAttribute("materials", materialService.findByLectureId(lectureId));
         } else {
