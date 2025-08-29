@@ -15,6 +15,11 @@
   <button type="submit">로그인</button>
 </form>
 
+<p>
+  아직 계정이 없나요?
+  <a th:href="@{/auth/signup}">회원가입</a>
+</p>
+
 <p th:if="${loginError}" th:text="${loginError}" style="color:red;"></p>
 
 <div th:replace="_fragments/footer :: footer"></div>

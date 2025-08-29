@@ -20,28 +20,20 @@ public class UserController {
         this.userService = userService;
     }
 
+    private boolean isAdmin(HttpSession session) {
+        User loginUser = (User) session.getAttribute("loginUser");
+        return loginUser != null && loginUser.getRole() == Role.ADMIN;
+    }
+
+
     // 회원 목록 조회 (관리자 전용)
     @GetMapping
     public String list(HttpSession session, Model model) {
-        User loginUser = (User) session.getAttribute("loginUser");
-        if (loginUser == null || loginUser.getRole() != Role.ADMIN) {
+        if (!isAdmin(session)) {
             return "redirect:/auth/login";
         }
-
         model.addAttribute("users", userService.findAll());
         return "user/list";
-    }
-
-    // 회원 삭제 (관리자 전용)
-    @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Long id, HttpSession session) {
-        User loginUser = (User) session.getAttribute("loginUser");
-        if (loginUser == null || loginUser.getRole() != Role.ADMIN) {
-            return "redirect:/auth/login";
-        }
-
-        userService.delete(id);
-        return "redirect:/users";
     }
 
     // 사용자 상세보기
@@ -69,29 +61,33 @@ public class UserController {
     // 회원 수정 폼
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable Long id, HttpSession session, Model model) {
-        User loginUser = (User) session.getAttribute("loginUser");
-        if (loginUser == null || loginUser.getRole() != Role.ADMIN) {
+        if (!isAdmin(session)) {
             return "redirect:/auth/login";
         }
-
         User user = userService.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
         model.addAttribute("user", user);
-        model.addAttribute("roles", Role.values()); // 역할 선택용
+        model.addAttribute("roles", Role.values());
         return "user/edit";
     }
 
     // 회원 수정 처리
     @PostMapping("/edit/{id}")
-    public String editSubmit(@PathVariable Long id,
-                             @ModelAttribute User updatedUser,
-                             HttpSession session) {
-        User loginUser = (User) session.getAttribute("loginUser");
-        if (loginUser == null || loginUser.getRole() != Role.ADMIN) {
+    public String editSubmit(@PathVariable Long id, @ModelAttribute User updatedUser, HttpSession session) {
+        if (!isAdmin(session)) {
             return "redirect:/auth/login";
         }
-
         userService.update(id, updatedUser);
         return "redirect:/users";
     }
 
+
+    // 회원 삭제 - 관리자만 가능
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable Long id, HttpSession session) {
+        if (!isAdmin(session)) {
+            return "redirect:/auth/login";
+        }
+        userService.delete(id);
+        return "redirect:/users";
+    }
 }
