@@ -1,67 +1,90 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="_fragments/header :: head">
-  <title>로그인 - Material Manager</title>
-</head>
-<body class="d-flex flex-column min-vh-100 bg-light">
+  <head th:replace="_fragments/header :: head">
+    <title>로그인 - CLD4 Archive</title>
+  </head>
+  <body class="d-flex flex-column min-vh-100 bg-light">
+    <div th:replace="_fragments/header :: header"></div>
 
-<div th:replace="_fragments/header :: header"></div>
+    <main
+      class="container mt-4 flex-grow-1 d-flex align-items-center justify-content-center"
+    >
+      <div class="row w-100 justify-content-center">
+        <div class="col-md-6 col-lg-4">
+          <div class="card shadow">
+            <div class="card-body p-5">
+              <div class="text-center mb-4">
+                <i class="bi bi-box-arrow-in-right display-4 text-primary"></i>
+                <h1 class="h3 mt-3">로그인</h1>
+                <p class="text-muted">CLD4 Archive에 로그인하세요</p>
+              </div>
 
-<main class="container mt-4 flex-grow-1 d-flex align-items-center justify-content-center">
-  <div class="row w-100 justify-content-center">
-    <div class="col-md-6 col-lg-4">
-      <div class="card shadow">
-        <div class="card-body p-5">
-          <div class="text-center mb-4">
-            <i class="bi bi-box-arrow-in-right display-4 text-primary"></i>
-            <h1 class="h3 mt-3">로그인</h1>
-            <p class="text-muted">Material Manager에 로그인하세요</p>
-          </div>
+              <div
+                th:if="${loginError}"
+                class="alert alert-danger"
+                role="alert"
+              >
+                <i class="bi bi-exclamation-triangle"></i>
+                <span th:text="${loginError}">로그인 오류</span>
+              </div>
 
-          <div th:if="${loginError}" class="alert alert-danger" role="alert">
-            <i class="bi bi-exclamation-triangle"></i> <span th:text="${loginError}">로그인 오류</span>
-          </div>
+              <form th:action="@{/auth/login}" method="post">
+                <div class="mb-3">
+                  <label for="email" class="form-label">이메일</label>
+                  <div class="input-group">
+                    <span class="input-group-text"
+                      ><i class="bi bi-envelope"></i
+                    ></span>
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="email"
+                      name="email"
+                      placeholder="이메일을 입력하세요"
+                      required
+                    />
+                  </div>
+                </div>
 
-          <form th:action="@{/auth/login}" method="post">
-            <div class="mb-3">
-              <label for="email" class="form-label">이메일</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                <input type="email" class="form-control" id="email" name="email" placeholder="이메일을 입력하세요" required>
+                <div class="mb-4">
+                  <label for="password" class="form-label">비밀번호</label>
+                  <div class="input-group">
+                    <span class="input-group-text"
+                      ><i class="bi bi-lock"></i
+                    ></span>
+                    <input
+                      type="password"
+                      class="form-control"
+                      id="password"
+                      name="password"
+                      placeholder="비밀번호를 입력하세요"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 mb-3">
+                  <i class="bi bi-box-arrow-in-right"></i> 로그인
+                </button>
+              </form>
+
+              <hr />
+
+              <div class="text-center">
+                <p class="mb-0">
+                  아직 계정이 없나요?
+                  <a th:href="@{/auth/signup}" class="text-decoration-none">
+                    <i class="bi bi-person-plus"></i> 회원가입
+                  </a>
+                </p>
               </div>
             </div>
-            
-            <div class="mb-4">
-              <label for="password" class="form-label">비밀번호</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                <input type="password" class="form-control" id="password" name="password" placeholder="비밀번호를 입력하세요" required>
-              </div>
-            </div>
-            
-            <button type="submit" class="btn btn-primary w-100 mb-3">
-              <i class="bi bi-box-arrow-in-right"></i> 로그인
-            </button>
-          </form>
-
-          <hr>
-          
-          <div class="text-center">
-            <p class="mb-0">
-              아직 계정이 없나요? 
-              <a th:href="@{/auth/signup}" class="text-decoration-none">
-                <i class="bi bi-person-plus"></i> 회원가입
-              </a>
-            </p>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</main>
+    </main>
 
-<div th:replace="_fragments/footer :: footer"></div>
-<div th:replace="_fragments/header :: scripts"></div>
-
-</body>
+    <div th:replace="_fragments/footer :: footer"></div>
+    <div th:replace="_fragments/header :: scripts"></div>
+  </body>
 </html>

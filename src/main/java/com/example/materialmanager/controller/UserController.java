@@ -33,7 +33,7 @@ public class UserController {
             return "redirect:/auth/login";
         }
         model.addAttribute("users", userService.findAll());
-        return "user/list";
+        return "users/list";
     }
 
     // 사용자 상세보기
@@ -41,14 +41,14 @@ public class UserController {
     public String detail(@PathVariable Long id, Model model) {
         User user = userService.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
         model.addAttribute("user", user);
-        return "user/detail";
+        return "users/detail";
     }
 
     // 사용자 등록 폼
     @GetMapping("/form")
     public String form(Model model) {
         model.addAttribute("user", new User());
-        return "user/form";
+        return "users/form";
     }
 
     // 사용자 등록 처리
@@ -67,7 +67,7 @@ public class UserController {
         User user = userService.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
         model.addAttribute("user", user);
         model.addAttribute("roles", Role.values());
-        return "user/edit";
+        return "users/edit";
     }
 
     // 회원 수정 처리
@@ -77,7 +77,7 @@ public class UserController {
             return "redirect:/auth/login";
         }
         userService.update(id, updatedUser);
-        return "redirect:/users";
+        return "redirect:/user";
     }
 
 

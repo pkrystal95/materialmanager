@@ -1,85 +1,126 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="_fragments/header :: head">
-  <title>회원가입 - Material Manager</title>
-</head>
-<body class="d-flex flex-column min-vh-100 bg-light">
+  <head th:replace="_fragments/header :: head">
+    <title>회원가입 - CLD4 Archive</title>
+  </head>
+  <body class="d-flex flex-column min-vh-100 bg-light">
+    <div th:replace="_fragments/header :: header"></div>
 
-<div th:replace="_fragments/header :: header"></div>
+    <main
+      class="container mt-4 flex-grow-1 d-flex align-items-center justify-content-center"
+    >
+      <div class="row w-100 justify-content-center">
+        <div class="col-md-8 col-lg-6">
+          <div class="card shadow">
+            <div class="card-body p-5">
+              <div class="text-center mb-4">
+                <i class="bi bi-person-plus display-4 text-success"></i>
+                <h1 class="h3 mt-3">회원가입</h1>
+                <p class="text-muted">CLD4 Archive에 가입하세요</p>
+              </div>
 
-<main class="container mt-4 flex-grow-1 d-flex align-items-center justify-content-center">
-  <div class="row w-100 justify-content-center">
-    <div class="col-md-8 col-lg-6">
-      <div class="card shadow">
-        <div class="card-body p-5">
-          <div class="text-center mb-4">
-            <i class="bi bi-person-plus display-4 text-success"></i>
-            <h1 class="h3 mt-3">회원가입</h1>
-            <p class="text-muted">Material Manager에 가입하세요</p>
-          </div>
+              <form
+                th:action="@{/auth/signup}"
+                th:object="${user}"
+                method="post"
+              >
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="name" class="form-label">이름</label>
+                    <div class="input-group">
+                      <span class="input-group-text"
+                        ><i class="bi bi-person"></i
+                      ></span>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="name"
+                        th:field="*{name}"
+                        placeholder="이름을 입력하세요"
+                        required
+                      />
+                    </div>
+                  </div>
 
-          <form th:action="@{/auth/signup}" th:object="${user}" method="post">
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label for="name" class="form-label">이름</label>
-                <div class="input-group">
-                  <span class="input-group-text"><i class="bi bi-person"></i></span>
-                  <input type="text" class="form-control" id="name" th:field="*{name}" placeholder="이름을 입력하세요" required>
+                  <div class="col-md-6 mb-3">
+                    <label for="email" class="form-label">이메일</label>
+                    <div class="input-group">
+                      <span class="input-group-text"
+                        ><i class="bi bi-envelope"></i
+                      ></span>
+                      <input
+                        type="email"
+                        class="form-control"
+                        id="email"
+                        th:field="*{email}"
+                        placeholder="이메일을 입력하세요"
+                        required
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-              
-              <div class="col-md-6 mb-3">
-                <label for="email" class="form-label">이메일</label>
-                <div class="input-group">
-                  <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                  <input type="email" class="form-control" id="email" th:field="*{email}" placeholder="이메일을 입력하세요" required>
-                </div>
-              </div>
-            </div>
-            
-            <div class="mb-3">
-              <label for="password" class="form-label">비밀번호</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="비밀번호를 입력하세요" required>
-              </div>
-            </div>
-            
-            <div class="mb-4">
-              <label for="role" class="form-label">역할</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-shield-check"></i></span>
-                <select class="form-select" id="role" th:field="*{role}" required>
-                  <option value="">역할을 선택하세요</option>
-                  <option th:each="r : ${roles}" th:value="${r}" 
-                          th:text="${r.name() == 'STUDENT' ? '학생' : (r.name() == 'TEACHER' ? '강사' : '관리자')}"></option>
-                </select>
-              </div>
-            </div>
-            
-            <button type="submit" class="btn btn-success w-100 mb-3">
-              <i class="bi bi-person-plus"></i> 회원가입
-            </button>
-          </form>
 
-          <hr>
-          
-          <div class="text-center">
-            <p class="mb-0">
-              이미 계정이 있나요? 
-              <a th:href="@{/auth/login}" class="text-decoration-none">
-                <i class="bi bi-box-arrow-in-right"></i> 로그인
-              </a>
-            </p>
+                <div class="mb-3">
+                  <label for="password" class="form-label">비밀번호</label>
+                  <div class="input-group">
+                    <span class="input-group-text"
+                      ><i class="bi bi-lock"></i
+                    ></span>
+                    <input
+                      type="password"
+                      class="form-control"
+                      id="password"
+                      th:field="*{password}"
+                      placeholder="비밀번호를 입력하세요"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div class="mb-4">
+                  <label for="role" class="form-label">역할</label>
+                  <div class="input-group">
+                    <span class="input-group-text"
+                      ><i class="bi bi-shield-check"></i
+                    ></span>
+                    <select
+                      class="form-select"
+                      id="role"
+                      th:field="*{role}"
+                      required
+                    >
+                      <option value="">역할을 선택하세요</option>
+                      <option
+                        th:each="r : ${roles}"
+                        th:value="${r}"
+                        th:text="${r.name() == 'STUDENT' ? '훈련생' : (r.name() == 'TEACHER' ? '강사' : '관리자')}"
+                      ></option>
+                    </select>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-success w-100 mb-3">
+                  <i class="bi bi-person-plus"></i> 회원가입
+                </button>
+              </form>
+
+              <hr />
+
+              <div class="text-center">
+                <p class="mb-0">
+                  이미 계정이 있나요?
+                  <a th:href="@{/auth/login}" class="text-decoration-none">
+                    <i class="bi bi-box-arrow-in-right"></i> 로그인
+                  </a>
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</main>
+    </main>
 
-<div th:replace="_fragments/footer :: footer"></div>
-<div th:replace="_fragments/header :: scripts"></div>
-
-</body>
+    <div th:replace="_fragments/footer :: footer"></div>
+    <div th:replace="_fragments/header :: scripts"></div>
+  </body>
 </html>

@@ -1,79 +1,112 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="_fragments/header :: head">
-  <title>자료 목록 - Material Manager</title>
-</head>
-<body class="d-flex flex-column min-vh-100">
+  <head th:replace="_fragments/header :: head">
+    <title>자료 목록 - CLD4 Archive</title>
+  </head>
+  <body class="d-flex flex-column min-vh-100">
+    <div th:replace="_fragments/header :: header"></div>
 
-<div th:replace="_fragments/header :: header"></div>
-
-<main class="container mt-4 flex-grow-1">
-  <div class="row">
-    <div class="col-12">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h2">
-          <i class="bi bi-file-earmark-text text-success"></i> 자료 목록
-        </h1>
-        <div>
-          <a th:if="${session.loginUser != null and
+    <main class="container mt-4 flex-grow-1">
+      <div class="row">
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h2">
+              <i class="bi bi-file-earmark-text text-success"></i> 자료 목록
+            </h1>
+            <div>
+              <a
+                th:if="${session.loginUser != null and
                      (session.loginUser.role.name() == 'ADMIN' or session.loginUser.role.name() == 'TEACHER')}"
-             th:href="@{/materials/form}" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> 자료 등록
-          </a>
-        </div>
-      </div>
-
-      <div th:if="${materials.empty}" class="alert alert-info text-center">
-        <i class="bi bi-info-circle"></i> 등록된 자료가 없습니다.
-      </div>
-
-      <div th:unless="${materials.empty}" class="row">
-        <div th:each="material : ${materials}" class="col-lg-4 col-md-6 mb-4">
-          <div class="card h-100">
-            <div class="card-header d-flex justify-content-between align-items-center">
-              <span th:switch="${material.type.name()}" class="badge fs-6">
-                <span th:case="'NOTION'" class="badge bg-primary">📝 Notion</span>
-                <span th:case="'CODESHARE'" class="badge bg-success">💻 Codeshare</span>
-                <span th:case="'SCREENSHOT'" class="badge bg-info">📸 스크린샷</span>
-                <span th:case="'PRACTICE'" class="badge bg-warning">🛠 실습</span>
-                <span th:case="*" class="badge bg-secondary">❓ 알 수 없음</span>
-              </span>
-              <div class="dropdown">
-                <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
-                  <i class="bi bi-three-dots-vertical"></i>
-                </button>
-                <ul class="dropdown-menu">
-                  <li>
-                    <form th:action="@{'/favorites/toggle/' + ${material.id}}" method="post" class="d-inline">
-                      <button type="submit" class="dropdown-item">
-                        <i class="bi bi-heart"></i> 즐겨찾기
-                      </button>
-                    </form>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div class="card-body">
-              <h5 class="card-title" th:text="${material.title}">자료 제목</h5>
-              <p class="card-text text-muted" th:if="${material.lecture != null}">
-                <i class="bi bi-calendar-event"></i> 
-                <span th:text="${material.lecture.title}">강의명</span>
-              </p>
-            </div>
-            <div class="card-footer bg-transparent">
-              <a th:href="${material.url}" target="_blank" class="btn btn-outline-primary w-100">
-                <i class="bi bi-box-arrow-up-right"></i> 자료 열기
+                th:href="@{/materials/form}"
+                class="btn btn-primary"
+              >
+                <i class="bi bi-plus-circle"></i> 자료 등록
               </a>
+            </div>
+          </div>
+
+          <div th:if="${materials.empty}" class="alert alert-info text-center">
+            <i class="bi bi-info-circle"></i> 등록된 자료가 없습니다.
+          </div>
+
+          <div th:unless="${materials.empty}" class="row">
+            <div
+              th:each="material : ${materials}"
+              class="col-lg-4 col-md-6 mb-4"
+            >
+              <div class="card h-100">
+                <div
+                  class="card-header d-flex justify-content-between align-items-center"
+                >
+                  <span th:switch="${material.type.name()}" class="badge fs-6">
+                    <span th:case="'NOTION'" class="badge bg-primary"
+                      >📝 Notion</span
+                    >
+                    <span th:case="'CODESHARE'" class="badge bg-success"
+                      >💻 Codeshare</span
+                    >
+                    <span th:case="'SCREENSHOT'" class="badge bg-info"
+                      >📸 스크린샷</span
+                    >
+                    <span th:case="'PRACTICE'" class="badge bg-warning"
+                      >🛠 실습</span
+                    >
+                    <span th:case="*" class="badge bg-secondary"
+                      >❓ 알 수 없음</span
+                    >
+                  </span>
+                  <div class="dropdown">
+                    <button
+                      class="btn btn-sm btn-outline-secondary"
+                      type="button"
+                      data-bs-toggle="dropdown"
+                    >
+                      <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li>
+                        <form
+                          th:action="@{'/favorites/toggle/' + ${material.id}}"
+                          method="post"
+                          class="d-inline"
+                        >
+                          <button type="submit" class="dropdown-item">
+                            <i class="bi bi-heart"></i> 즐겨찾기
+                          </button>
+                        </form>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title" th:text="${material.title}">
+                    자료 제목
+                  </h5>
+                  <p
+                    class="card-text text-muted"
+                    th:if="${material.lecture != null}"
+                  >
+                    <i class="bi bi-calendar-event"></i>
+                    <span th:text="${material.lecture.title}">강의명</span>
+                  </p>
+                </div>
+                <div class="card-footer bg-transparent">
+                  <a
+                    th:href="${material.url}"
+                    target="_blank"
+                    class="btn btn-outline-primary w-100"
+                  >
+                    <i class="bi bi-box-arrow-up-right"></i> 자료 열기
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</main>
+    </main>
 
-<div th:replace="_fragments/footer :: footer"></div>
-<div th:replace="_fragments/header :: scripts"></div>
-
-</body>
+    <div th:replace="_fragments/footer :: footer"></div>
+    <div th:replace="_fragments/header :: scripts"></div>
+  </body>
 </html>

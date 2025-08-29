@@ -1,79 +1,96 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="_fragments/header :: head">
-  <title>강의 등록/수정 - Material Manager</title>
-</head>
-<body class="d-flex flex-column min-vh-100">
+  <head th:replace="_fragments/header :: head">
+    <title>강의 등록/수정 - CLD4 Archive</title>
+  </head>
+  <body class="d-flex flex-column min-vh-100">
+    <div th:replace="_fragments/header :: header"></div>
 
-<div th:replace="_fragments/header :: header"></div>
-
-<main class="container mt-4 flex-grow-1">
-  <div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-      <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-          <h1 class="h4 mb-0">
-            <i class="bi bi-calendar-plus" th:if="${lecture.id == null}"></i>
-            <i class="bi bi-calendar-check" th:unless="${lecture.id == null}"></i>
-            <span th:text="${lecture.id == null} ? '강의 등록' : '강의 수정'">강의 등록/수정</span>
-          </h1>
-        </div>
-        <div class="card-body">
-          <form th:action="${lecture.id == null} ? @{/lectures/form} : @{/lectures/edit/{id}(id=${lecture.id})}" 
-                th:object="${lecture}" 
-                method="post">
-            
-            <div class="mb-3">
-              <label for="title" class="form-label">
-                <i class="bi bi-card-text"></i> 강의 제목
-              </label>
-              <input type="text" 
-                     class="form-control" 
-                     id="title" 
-                     th:field="*{title}" 
-                     placeholder="강의 제목을 입력하세요"
-                     required>
+    <main class="container mt-4 flex-grow-1">
+      <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+          <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+              <h1 class="h4 mb-0">
+                <i
+                  class="bi bi-calendar-plus"
+                  th:if="${lecture.id == null}"
+                ></i>
+                <i
+                  class="bi bi-calendar-check"
+                  th:unless="${lecture.id == null}"
+                ></i>
+                <span
+                  th:text="${lecture.id == null} ? '강의 등록' : '강의 수정'"
+                  >강의 등록/수정</span
+                >
+              </h1>
             </div>
+            <div class="card-body">
+              <form
+                th:action="${lecture.id == null} ? @{/lectures/form} : @{/lectures/edit/{id}(id=${lecture.id})}"
+                th:object="${lecture}"
+                method="post"
+              >
+                <div class="mb-3">
+                  <label for="title" class="form-label">
+                    <i class="bi bi-card-text"></i> 강의 제목
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="title"
+                    th:field="*{title}"
+                    placeholder="강의 제목을 입력하세요"
+                    required
+                  />
+                </div>
 
-            <div class="mb-3">
-              <label for="lectureDate" class="form-label">
-                <i class="bi bi-calendar3"></i> 강의 날짜
-              </label>
-              <input type="date" 
-                     class="form-control" 
-                     id="lectureDate" 
-                     th:field="*{lectureDate}"
-                     required>
-            </div>
+                <div class="mb-3">
+                  <label for="lectureDate" class="form-label">
+                    <i class="bi bi-calendar3"></i> 강의 날짜
+                  </label>
+                  <input
+                    type="date"
+                    class="form-control"
+                    id="lectureDate"
+                    th:field="*{lectureDate}"
+                    required
+                  />
+                </div>
 
-            <div class="mb-4">
-              <label for="content" class="form-label">
-                <i class="bi bi-file-text"></i> 강의 내용
-              </label>
-              <textarea class="form-control" 
-                        id="content" 
-                        th:field="*{content}" 
-                        rows="5"
-                        placeholder="강의 내용을 입력하세요"></textarea>
-            </div>
+                <div class="mb-4">
+                  <label for="content" class="form-label">
+                    <i class="bi bi-file-text"></i> 강의 내용
+                  </label>
+                  <textarea
+                    class="form-control"
+                    id="content"
+                    th:field="*{content}"
+                    rows="5"
+                    placeholder="강의 내용을 입력하세요"
+                  ></textarea>
+                </div>
 
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-              <a th:href="@{/lectures}" class="btn btn-outline-secondary me-md-2">
-                <i class="bi bi-arrow-left"></i> 취소
-              </a>
-              <button type="submit" class="btn btn-primary">
-                <i class="bi bi-check-circle"></i> 저장
-              </button>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                  <a
+                    th:href="@{/lectures}"
+                    class="btn btn-outline-secondary me-md-2"
+                  >
+                    <i class="bi bi-arrow-left"></i> 취소
+                  </a>
+                  <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> 저장
+                  </button>
+                </div>
+              </form>
             </div>
-          </form>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-</main>
+    </main>
 
-<div th:replace="_fragments/footer :: footer"></div>
-<div th:replace="_fragments/header :: scripts"></div>
-
-</body>
+    <div th:replace="_fragments/footer :: footer"></div>
+    <div th:replace="_fragments/header :: scripts"></div>
+  </body>
 </html>
