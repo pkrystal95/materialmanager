@@ -29,8 +29,12 @@ public class LectureController {
         }
 
         List<Lecture> lectures;
-        // Enhanced search functionality
-        if (title != null || content != null || (date != null && !date.isEmpty())) {
+        // Enhanced search functionality - check for non-empty parameters
+        boolean hasSearchParams = (title != null && !title.trim().isEmpty()) || 
+                                 (content != null && !content.trim().isEmpty()) || 
+                                 (date != null && !date.isEmpty());
+        
+        if (hasSearchParams) {
             java.time.LocalDate parsedDate = null;
             if (date != null && !date.isEmpty()) {
                 parsedDate = java.time.LocalDate.parse(date);

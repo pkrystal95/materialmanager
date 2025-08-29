@@ -6,6 +6,10 @@ import com.example.materialmanager.service.LectureService;
 import com.example.materialmanager.service.MaterialService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,21 +31,45 @@ public class MaterialController {
     public String list(@RequestParam(required = false) Long lectureId,
                       @RequestParam(required = false) String title,
                       @RequestParam(required = false) String type,
+                      @RequestParam(defaultValue = "0") int page,
+                      @RequestParam(defaultValue = "12") int size,
+                      @RequestParam(defaultValue = "id") String sort,
+                      @RequestParam(defaultValue = "desc") String direction,
                       HttpSession session, Model model) {
         if (session.getAttribute("loginUser") == null) {
             return "redirect:/auth/login";
         }
 
-        // Search functionality
-        if (title != null || type != null || lectureId != null) {
-            model.addAttribute("materials", materialService.searchMaterials(title, type, lectureId));
+        // 정렬 설정
+        Sort.Direction sortDirection = "asc".equalsIgnoreCase(direction) ? Sort.Direction.ASC : Sort.Direction.DESC;
+        String sortField = getSortField(sort);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortField));
+
+        // Search functionality - check for non-empty parameters
+        boolean hasSearchParams = (title != null && !title.trim().isEmpty()) || 
+                                 (type != null && !type.trim().isEmpty()) || 
+                                 (lectureId != null);
+        
+        Page<Material> materialPage;
+        if (hasSearchParams) {
+            materialPage = materialService.searchMaterialsPaged(title, type, lectureId, pageable);
         } else {
-            model.addAttribute("materials", materialService.findAll());
+            materialPage = materialService.findAllPaged(pageable);
         }
         
-        // Add lectures for dropdown
+        model.addAttribute("materials", materialPage.getContent());
+        model.addAttribute("page", materialPage);
         model.addAttribute("lectures", lectureService.findAll());
         return "material/list";
+    }
+    
+    private String getSortField(String sort) {
+        return switch (sort) {
+            case "name" -> "title";
+            case "type" -> "type";
+            case "newest" -> "id";
+            default -> "id";
+        };
     }
 
     @GetMapping("/form")
@@ -88,4 +116,5 @@ public class MaterialController {
         materialService.delete(id);
         return "redirect:/materials";
     }
+    
 }

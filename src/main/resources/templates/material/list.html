@@ -1,170 +1,384 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="_fragments/header :: head">
-    <title>자료 목록 - CLD4 Archive</title>
-  </head>
-  <body class="d-flex flex-column min-vh-100">
-    <div th:replace="_fragments/header :: header"></div>
+<head th:replace="_fragments/layout :: head('자료 목록 - CLD4 Archive')">
+  <title>자료 목록 - CLD4 Archive</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+<div th:replace="_fragments/layout :: header"></div>
 
-    <main class="container mt-4 flex-grow-1">
-      <div class="row">
-        <div class="col-12">
-          <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h2">
-              <i class="bi bi-file-earmark-text text-success"></i> 자료 목록
-            </h1>
-            <div>
-              <a
-                th:if="${session.loginUser != null and
+<main class="container mt-4 flex-grow-1">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">
+          <i class="bi bi-file-earmark-text text-success"></i> 자료 목록
+        </h1>
+        <div>
+          <a
+                  th:if="${session.loginUser != null and
                      (session.loginUser.role.name() == 'ADMIN' or session.loginUser.role.name() == 'TEACHER')}"
-                th:href="@{/materials/form}"
-                class="btn btn-primary"
-              >
-                <i class="bi bi-plus-circle"></i> 자료 등록
-              </a>
-            </div>
-          </div>
+                  th:href="@{/materials/form}"
+                  class="btn btn-primary"
+          >
+            <i class="bi bi-plus-circle"></i> 자료 등록
+          </a>
+        </div>
+      </div>
 
-          <div th:if="${materials.empty}" class="alert alert-info text-center">
-            <i class="bi bi-info-circle"></i> 등록된 자료가 없습니다.
-          </div>
-
-          <!-- Materials Grid -->
-          <div th:unless="${materials.empty}" class="row">
-            <div
-              th:each="material : ${materials}"
-              class="col-xl-3 col-lg-4 col-md-6 mb-4"
-            >
-              <div class="card material-card h-100 border-0">
-                <div class="card-header border-0 d-flex justify-content-between align-items-start">
-                  <div>
-                    <span th:switch="${material.type.name()}" class="badge material-badge">
-                      <span th:case="'NOTION'" class="badge badge-notion">
-                        📝 Notion
-                      </span>
-                      <span th:case="'CODESHARE'" class="badge badge-codeshare">
-                        💻 Codeshare
-                      </span>
-                      <span th:case="'SCREENSHOT'" class="badge badge-screenshot">
-                        📸 스크린샷
-                      </span>
-                      <span th:case="'PRACTICE'" class="badge badge-practice">
-                        🛠 Gist
-                      </span>
-                      <span th:case="*" class="badge bg-secondary">
-                        ❓ 기타
-                      </span>
-                    </span>
-                  </div>
-                  <div class="dropdown">
-                    <button
-                      class="btn btn-sm btn-light border-0"
-                      type="button"
-                      data-bs-toggle="dropdown"
-                      style="width: 32px; height: 32px; padding: 0;"
-                    >
-                      <i class="bi bi-three-dots-vertical"></i>
-                    </button>
-                    <ul class="dropdown-menu shadow-sm">
-                      <li>
-                        <form
-                          th:action="@{'/favorites/toggle/' + ${material.id}}"
-                          method="post"
-                          class="d-inline"
-                        >
-                          <button type="submit" class="dropdown-item">
-                            <i class="bi bi-heart me-2"></i>즐겨찾기 추가
-                          </button>
-                        </form>
-                      </li>
-                      <li><hr class="dropdown-divider"></li>
-                      <li>
-                        <a class="dropdown-item" th:href="${material.url}" target="_blank">
-                          <i class="bi bi-box-arrow-up-right me-2"></i>새 탭에서 열기
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
+      <!-- Advanced Search Section -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="bi bi-search me-2"></i>자료 검색
+          </h5>
+        </div>
+        <div class="card-body">
+          <form th:action="@{/materials}" method="get">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label for="searchTitle" class="form-label">제목 검색</label>
+                <input
+                        type="text"
+                        class="form-control"
+                        id="searchTitle"
+                        name="title"
+                        th:value="${param.title}"
+                        placeholder="자료 제목 입력..."
+                />
+              </div>
+              <div class="col-md-3">
+                <label for="searchType" class="form-label">자료 타입</label>
+                <select class="form-select" id="searchType" name="type">
+                  <option value="">전체 타입</option>
+                  <option value="NOTION" th:selected="${param.type == 'NOTION'}">📝 Notion</option>
+                  <option value="CODESHARE" th:selected="${param.type == 'CODESHARE'}">💻 Codeshare</option>
+                  <option value="SCREENSHOT" th:selected="${param.type == 'SCREENSHOT'}">📸 스크린샷</option>
+                  <option value="PRACTICE" th:selected="${param.type == 'PRACTICE'}">🛠 Gist</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label for="searchLecture" class="form-label">강의</label>
+                <select class="form-select" id="searchLecture" name="lectureId">
+                  <option value="">전체 강의</option>
+                  <option th:each="lecture : ${lectures}"
+                          th:value="${lecture.id}"
+                          th:text="${lecture.title}"
+                          th:selected="${param.lectureId == lecture.id.toString()}">강의명</option>
+                </select>
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">&nbsp;</label>
+                <div class="d-grid">
+                  <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-search me-1"></i>검색
+                  </button>
                 </div>
-                <div class="card-body">
-                  <h5 class="card-title material-title" th:text="${material.title}">
-                    자료 제목
-                  </h5>
-                  <div
-                    class="lecture-info mb-3"
-                    th:if="${material.lecture != null}"
-                  >
-                    <span class="badge bg-light text-dark border">
+              </div>
+            </div>
+            <div class="row mt-2" th:if="${not #strings.isEmpty(param.title) or not #strings.isEmpty(param.type) or not #strings.isEmpty(param.lectureId)}">
+              <div class="col-12">
+                <a th:href="@{/materials}" class="btn btn-outline-secondary btn-sm">
+                  <i class="bi bi-x-circle me-1"></i>검색 초기화
+                </a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Search Results Info -->
+      <div class="d-flex justify-content-between align-items-center mb-3" th:unless="${materials.empty}">
+        <div class="text-muted">
+              <span th:if="${not #strings.isEmpty(param.title) or not #strings.isEmpty(param.type) or not #strings.isEmpty(param.lectureId)}">
+                검색 결과: <strong th:text="${page != null ? page.totalElements : #lists.size(materials)}">0</strong>개 자료
+              </span>
+          <span th:unless="${not #strings.isEmpty(param.title) or not #strings.isEmpty(param.type) or not #strings.isEmpty(param.lectureId)}">
+                전체 <strong th:text="${page != null ? page.totalElements : #lists.size(materials)}">0</strong>개 자료
+              </span>
+        </div>
+        <div class="dropdown">
+          <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+            <i class="bi bi-sort-down me-1"></i>정렬
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" th:href="@{/materials(sort='newest', direction='desc', title=${param.title}, type=${param.type}, lectureId=${param.lectureId})}">최신순</a></li>
+            <li><a class="dropdown-item" th:href="@{/materials(sort='name', direction='asc', title=${param.title}, type=${param.type}, lectureId=${param.lectureId})}">이름순</a></li>
+            <li><a class="dropdown-item" th:href="@{/materials(sort='type', direction='asc', title=${param.title}, type=${param.type}, lectureId=${param.lectureId})}">타입별</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div th:if="${materials.empty}" class="text-center py-5">
+        <div class="mb-3">
+          <i class="bi bi-inbox" style="font-size: 3rem; color: #6c757d;"></i>
+        </div>
+        <h5 class="text-muted mb-2">
+          <span th:if="${not #strings.isEmpty(param.title) or not #strings.isEmpty(param.type) or not #strings.isEmpty(param.lectureId)}">검색 결과가 없습니다</span>
+          <span th:unless="${not #strings.isEmpty(param.title) or not #strings.isEmpty(param.type) or not #strings.isEmpty(param.lectureId)}">등록된 자료가 없습니다</span>
+        </h5>
+        <p class="text-muted mb-3">
+          <span th:if="${not #strings.isEmpty(param.title) or not #strings.isEmpty(param.type) or not #strings.isEmpty(param.lectureId)}">다른 검색 조건을 시도해보세요.</span>
+          <span th:unless="${not #strings.isEmpty(param.title) or not #strings.isEmpty(param.type) or not #strings.isEmpty(param.lectureId)}">첫 번째 자료를 등록해보세요!</span>
+        </p>
+        <div th:if="${not #strings.isEmpty(param.title) or not #strings.isEmpty(param.type) or not #strings.isEmpty(param.lectureId)}">
+          <a th:href="@{/materials}" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-1"></i>전체 자료 보기
+          </a>
+        </div>
+        <div th:unless="${not #strings.isEmpty(param.title) or not #strings.isEmpty(param.type) or not #strings.isEmpty(param.lectureId)}"
+             th:if="${session.loginUser != null and (session.loginUser.role.name() == 'ADMIN' or session.loginUser.role.name() == 'TEACHER')}">
+          <a th:href="@{/materials/form}" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i>자료 등록하기
+          </a>
+        </div>
+      </div>
+
+      <!-- Materials Grid -->
+      <div th:unless="${materials.empty}" class="row" id="materialsGrid">
+        <div
+                th:each="material : ${materials}"
+                class="col-xl-3 col-lg-4 col-md-6 mb-4 material-item"
+        >
+          <div class="card material-card h-100 shadow-sm border-0 position-relative">
+            <div class="card-header d-flex justify-content-between align-items-start">
+                  <span th:switch="${material.type.name()}"
+                        th:class="|badge material-badge fs-6 px-3 py-2 ${material.type.name() == 'NOTION' ? 'badge-notion' :
+                                  (material.type.name() == 'CODESHARE' ? 'badge-codeshare' :
+                                  (material.type.name() == 'SCREENSHOT' ? 'badge-screenshot' :
+                                  (material.type.name() == 'PRACTICE' ? 'badge-practice' : 'bg-secondary')))}|">
+                    <span th:case="'NOTION'">📝 Notion</span>
+                    <span th:case="'CODESHARE'">💻 Codeshare</span>
+                    <span th:case="'SCREENSHOT'">📸 스크린샷</span>
+                    <span th:case="'PRACTICE'">🛠 Gist</span>
+                    <span th:case="*">❓ 기타</span>
+                  </span>
+
+              <!-- Favorite Heart Button -->
+              <form
+                      th:action="@{'/favorites/toggle/' + ${material.id}}"
+                      method="post"
+                      class="d-inline"
+              >
+                <button type="submit" class="btn btn-sm btn-light border-0 favorite-btn" title="즐겨찾기 토글">
+                  <i class="bi bi-heart"></i>
+                </button>
+              </form>
+            </div>
+            <div class="card-body pt-0">
+              <h5 class="card-title material-title mb-3">
+                <a th:href="${material.url}" target="_blank" class="text-decoration-none text-dark material-link">
+                  <span th:text="${material.title}">자료 제목</span>
+                  <i class="bi bi-box-arrow-up-right ms-1 text-muted" style="font-size: 0.8em;"></i>
+                </a>
+              </h5>
+              <div class="lecture-info mb-2" th:if="${material.lecture != null}">
+                    <span class="badge bg-light text-dark border lecture-badge">
                       <i class="bi bi-calendar-event me-1"></i>
                       <span th:text="${material.lecture.title}">강의명</span>
                     </span>
-                  </div>
-                </div>
-                <div class="card-footer border-0 bg-transparent pt-0">
-                  <a
-                    th:href="${material.url}"
-                    target="_blank"
-                    class="btn btn-primary w-100 material-btn"
-                  >
-                    <i class="bi bi-arrow-up-right me-2"></i>자료 확인
-                  </a>
-                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </main>
 
-    <div th:replace="_fragments/layout :: footer"></div>
-    <div th:replace="_fragments/layout :: scripts"></div>
+      <!-- Pagination -->
+      <div th:if="${page != null}" class="d-flex justify-content-center mt-3">
+        <nav>
+          <ul class="pagination">
+            <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+              <a class="page-link" th:href="@{/materials(page=${page.number - 1}, title=${param.title}, type=${param.type}, lectureId=${param.lectureId})}">이전</a>
+            </li>
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, page.totalPages-1)}" th:classappend="${page.number == i} ? 'active'">
+              <a class="page-link" th:href="@{/materials(page=${i}, title=${param.title}, type=${param.type}, lectureId=${param.lectureId})}" th:text="${i + 1}">1</a>
+            </li>
+            <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+              <a class="page-link" th:href="@{/materials(page=${page.number + 1}, title=${param.title}, type=${param.type}, lectureId=${param.lectureId})}">다음</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<div th:replace="_fragments/layout :: footer"></div>
+<div th:replace="_fragments/layout :: scripts"></div>
+
+<style>
+  /* Material Cards */
+  .material-card {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border-radius: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    overflow: hidden;
+    background: white;
+    position: relative;
     
-    <style>
-      .material-card {
-        transition: all 0.3s ease;
-        border-radius: 12px;
-      }
-      .material-card:hover {
-        transform: translateY(-4px);
-      }
-      .material-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        line-height: 1.4;
-        margin-bottom: 1rem;
-      }
-      .material-badge {
-        font-size: 0.8rem;
-        font-weight: 500;
-      }
-      .badge-notion {
-        background-color: #000 !important;
-        color: white !important;
-      }
-      .badge-codeshare {
-        background-color: #28a745 !important;
-        color: white !important;
-      }
-      .badge-screenshot {
-        background-color: #17a2b8 !important;
-        color: white !important;
-      }
-      .badge-practice {
-        background-color: #ffc107 !important;
-        color: #212529 !important;
-      }
-      .lecture-info {
-        font-size: 0.9rem;
-      }
-      .material-btn {
-        font-weight: 500;
-        border-radius: 8px;
-      }
-      @media (max-width: 768px) {
-        .col-xl-3 {
-          margin-bottom: 1rem !important;
-        }
-      }
-    </style>
-  </body>
+    /* Container overflow handling */
+    max-width: 100%;
+    word-wrap: break-word;
+    word-break: break-word;
+  }
+  .material-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15) !important;
+    border-color: rgba(255, 96, 0, 0.2) !important;
+  }
+  .material-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #FF6B35, #FF8F00, #FFC107);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .material-card:hover::before {
+    opacity: 1;
+  }
+
+  /* Card Header Background */
+  .material-card .card-header {
+    padding: 1rem 1.5rem;
+    background: #f8f9fa !important;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    border-radius: 16px 16px 0 0;
+    
+    /* Header overflow handling */
+    overflow: hidden;
+    max-width: 100%;
+  }
+  
+  /* Card Body */
+  .material-card .card-body {
+    padding: 1.5rem;
+    overflow: hidden;
+    max-width: 100%;
+  }
+
+  /* Card Title */
+  .material-title {
+    margin-top: 0.5rem; /* 제목 위쪽 마진 추가 */
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 1rem !important;
+    
+    /* Text overflow handling - 2줄 제한 */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 3.12rem; /* line-height * lines * font-size approximation */
+    word-break: break-word;
+  }
+
+  /* Material Type Badges */
+  .material-badge {
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 12px;
+    padding: 0.5rem 1rem !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: white !important;
+    
+    /* Text overflow handling */
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+  }
+  .badge-notion { background: linear-gradient(135deg, #000, #333) !important; }
+  .badge-codeshare { background: linear-gradient(135deg, #28a745, #20c997) !important; }
+  .badge-screenshot { background: linear-gradient(135deg, #17a2b8, #6f42c1) !important; }
+  .badge-practice { background: linear-gradient(135deg, #ffc107, #fd7e14) !important; color: #212529 !important; }
+
+  /* Lecture Info Badge */
+  .lecture-badge {
+    font-size: 0.8rem;
+    font-weight: 500;
+    background-color: #f8f9fa !important;
+    color: #6c757d !important;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+    
+    /* Text overflow handling */
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+  }
+
+  /* Material Link */
+  .material-link {
+    transition: all 0.2s ease;
+    display: block;
+    color: #2c3e50 !important;
+    
+    /* Link overflow handling - inherit from parent title */
+    width: 100%;
+    overflow: hidden;
+  }
+  .material-link:hover {
+    color: #FF6B35 !important;
+    text-decoration: none !important;
+    transform: translateX(2px);
+  }
+  .material-link:hover .bi-box-arrow-up-right {
+    color: #FF6B35 !important;
+    transform: translateX(2px) translateY(-1px);
+  }
+
+  /* Favorite Button */
+  .favorite-btn {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 50% !important;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  .favorite-btn:hover {
+    background: linear-gradient(135deg, #dc3545, #e91e63) !important;
+    color: white !important;
+    transform: scale(1.1);
+    border-color: transparent !important;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+  }
+  .favorite-btn:hover .bi-heart { transform: scale(1.2); }
+
+  /* Lecture Info Container */
+  .lecture-info {
+    overflow: hidden;
+    max-width: 100%;
+  }
+  
+  /* Grid Container */
+  .material-item {
+    overflow: hidden;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .material-card { margin-bottom: 1.5rem !important; }
+    .material-title { font-size: 1.1rem; max-height: 2.86rem; }
+    .material-badge { font-size: 0.8rem; padding: 0.4rem 0.8rem !important; max-width: 120px; }
+  }
+</style>
+</body>
 </html>

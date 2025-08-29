@@ -76,7 +76,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="row mt-2" th:if="${param.title or param.date or param.content}">
+                <div class="row mt-2" th:if="${not #strings.isEmpty(param.title) or not #strings.isEmpty(param.date) or not #strings.isEmpty(param.content)}">
                   <div class="col-12">
                     <a th:href="@{/lectures}" class="btn btn-outline-secondary btn-sm">
                       <i class="bi bi-x-circle me-1"></i>검색 초기화
@@ -90,10 +90,10 @@
           <!-- Search Results Info -->
           <div class="d-flex justify-content-between align-items-center mb-3" th:unless="${lectures.empty}">
             <div class="text-muted">
-              <span th:if="${param.title or param.date or param.content}">
+              <span th:if="${not #strings.isEmpty(param.title) or not #strings.isEmpty(param.date) or not #strings.isEmpty(param.content)}">
                 검색 결과: <strong th:text="${lectures.size()}">0</strong>개 강의
               </span>
-              <span th:unless="${param.title or param.date or param.content}">
+              <span th:unless="${not #strings.isEmpty(param.title) or not #strings.isEmpty(param.date) or not #strings.isEmpty(param.content)}">
                 전체 <strong th:text="${lectures.size()}">0</strong>개 강의
               </span>
             </div>
@@ -104,14 +104,14 @@
               <i class="bi bi-calendar-x" style="font-size: 3rem; color: #6c757d;"></i>
             </div>
             <h5 class="text-muted mb-2">
-              <span th:if="${param.title or param.date or param.content}">검색 결과가 없습니다</span>
-              <span th:unless="${param.title or param.date or param.content}">등록된 강의가 없습니다</span>
+              <span th:if="${not #strings.isEmpty(param.title) or not #strings.isEmpty(param.date) or not #strings.isEmpty(param.content)}">검색 결과가 없습니다</span>
+              <span th:unless="${not #strings.isEmpty(param.title) or not #strings.isEmpty(param.date) or not #strings.isEmpty(param.content)}">등록된 강의가 없습니다</span>
             </h5>
             <p class="text-muted mb-3">
-              <span th:if="${param.title or param.date or param.content}">다른 검색 조건을 시도해보세요.</span>
-              <span th:unless="${param.title or param.date or param.content}">첫 번째 강의를 등록해보세요!</span>
+              <span th:if="${not #strings.isEmpty(param.title) or not #strings.isEmpty(param.date) or not #strings.isEmpty(param.content)}">다른 검색 조건을 시도해보세요.</span>
+              <span th:unless="${not #strings.isEmpty(param.title) or not #strings.isEmpty(param.date) or not #strings.isEmpty(param.content)}">첫 번째 강의를 등록해보세요!</span>
             </p>
-            <div th:if="${param.title or param.date or param.content}">
+            <div th:if="${not #strings.isEmpty(param.title) or not #strings.isEmpty(param.date) or not #strings.isEmpty(param.content)}">
               <a th:href="@{/lectures}" class="btn btn-outline-primary">
                 <i class="bi bi-arrow-left me-1"></i>전체 강의 보기
               </a>
