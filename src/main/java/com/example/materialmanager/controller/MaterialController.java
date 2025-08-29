@@ -1,5 +1,7 @@
 package com.example.materialmanager.controller;
 
+import com.example.materialmanager.common.Constants;
+import com.example.materialmanager.common.SecurityUtils;
 import com.example.materialmanager.domain.Material;
 import com.example.materialmanager.domain.MaterialType;
 import com.example.materialmanager.domain.User;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
@@ -36,6 +39,9 @@ public class MaterialController {
         this.favoriteService = favoriteService;
     }
 
+    /**
+     * 자료 목록 조회
+     */
     @GetMapping
     public String list(@RequestParam(required = false) Long lectureId,
                       @RequestParam(required = false) String title,
@@ -45,8 +51,9 @@ public class MaterialController {
                       @RequestParam(defaultValue = "id") String sort,
                       @RequestParam(defaultValue = "desc") String direction,
                       HttpSession session, Model model) {
-        if (session.getAttribute("loginUser") == null) {
-            return "redirect:/auth/login";
+        
+        if (!SecurityUtils.isLoggedIn(session)) {
+            return Constants.REDIRECT_LOGIN;
         }
 
         // 정렬 설정
@@ -70,8 +77,8 @@ public class MaterialController {
         model.addAttribute("page", materialPage);
         model.addAttribute("lectures", lectureService.findAll());
         
-        // 즐겨찾기 상태를 한 번에 조회하여 Map으로 전달
-        User loginUser = (User) session.getAttribute("loginUser");
+        // 즐겨찾기 상태 조회
+        User loginUser = SecurityUtils.getCurrentUser(session);
         if (loginUser != null) {
             List<Long> materialIds = materialPage.getContent().stream()
                 .map(Material::getId)
@@ -81,7 +88,7 @@ public class MaterialController {
             model.addAttribute("loginUserId", loginUser.getId());
         }
         
-        return "material/list";
+        return Constants.VIEW_MATERIALS_LIST;
     }
     
     private String getSortField(String sort) {
@@ -93,49 +100,85 @@ public class MaterialController {
         };
     }
 
+    /**
+     * 자료 등록 폼
+     */
     @GetMapping("/form")
-    public String form(Model model) {
+    public String form(HttpSession session, Model model) {
+        if (!SecurityUtils.isTeacherOrAdmin(session)) {
+            return Constants.REDIRECT_LOGIN;
+        }
+        
         model.addAttribute("material", new Material());
         model.addAttribute("lectures", lectureService.findAll());
         model.addAttribute("types", MaterialType.values());
-        return "material/form";
+        return Constants.VIEW_MATERIALS_FORM;
     }
 
+    /**
+     * 자료 등록 처리
+     */
     @PostMapping("/form")
     public String submit(@Valid @ModelAttribute Material material,
                          BindingResult bindingResult,
-                         Model model) {
-
+                         HttpSession session,
+                         Model model,
+                         RedirectAttributes redirectAttributes) {
+        
+        if (!SecurityUtils.isTeacherOrAdmin(session)) {
+            return Constants.REDIRECT_LOGIN;
+        }
+        
         model.addAttribute("lectures", lectureService.findAll());
         model.addAttribute("types", MaterialType.values());
-
+        
         if (bindingResult.hasErrors()) {
-            return "material/form";
+            return Constants.VIEW_MATERIALS_FORM;
         }
-
+        
+        // 강의 유효성 검증
         if (material.getLecture() == null || material.getLecture().getId() == null) {
             bindingResult.rejectValue("lecture", "invalid", "강의를 선택해주세요.");
-            return "material/form";
+            return Constants.VIEW_MATERIALS_FORM;
         }
-
+        
         lectureService.findById(material.getLecture().getId())
                 .ifPresentOrElse(
                         lecture -> material.setLecture(lecture),
-                        () -> bindingResult.rejectValue("lecture", "invalid", "선택한 강의가 존재하지 않습니다.")
+                        () -> bindingResult.rejectValue("lecture", "invalid", Constants.ERROR_LECTURE_NOT_FOUND)
                 );
-
+        
         if (bindingResult.hasErrors()) {
-            return "material/form";
+            return Constants.VIEW_MATERIALS_FORM;
         }
-
-        materialService.save(material);
-        return "redirect:/materials?lectureId=" + material.getLecture().getId();
+        
+        try {
+            materialService.save(material);
+            redirectAttributes.addFlashAttribute("successMessage", "자료가 성공적으로 등록되었습니다.");
+            return Constants.REDIRECT_MATERIALS + "?lectureId=" + material.getLecture().getId();
+        } catch (Exception e) {
+            bindingResult.reject("global", "자료 등록 중 오류가 발생했습니다.");
+            return Constants.VIEW_MATERIALS_FORM;
+        }
     }
 
+    /**
+     * 자료 삭제
+     */
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Long id) {
-        materialService.delete(id);
-        return "redirect:/materials";
+    public String delete(@PathVariable Long id, HttpSession session, RedirectAttributes redirectAttributes) {
+        if (!SecurityUtils.isTeacherOrAdmin(session)) {
+            return Constants.REDIRECT_LOGIN;
+        }
+        
+        try {
+            materialService.delete(id);
+            redirectAttributes.addFlashAttribute("successMessage", "자료가 성공적으로 삭제되었습니다.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "자료 삭제 중 오류가 발생했습니다.");
+        }
+        
+        return Constants.REDIRECT_MATERIALS;
     }
     
 }

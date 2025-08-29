@@ -1,49 +1,49 @@
 package com.example.materialmanager.controller;
 
-import com.example.materialmanager.domain.Lecture;
-import com.example.materialmanager.domain.Material;
-import com.example.materialmanager.service.LectureService;
-import com.example.materialmanager.service.MaterialService;
+import com.example.materialmanager.common.Constants;
+import com.example.materialmanager.common.SecurityUtils;
+import com.example.materialmanager.service.SearchService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
-
 @Controller
 public class SearchController {
 
-    private final MaterialService materialService;
-    private final LectureService lectureService;
+    private final SearchService searchService;
 
-    public SearchController(MaterialService materialService, LectureService lectureService) {
-        this.materialService = materialService;
-        this.lectureService = lectureService;
+    public SearchController(SearchService searchService) {
+        this.searchService = searchService;
     }
 
+    /**
+     * 통합 검색
+     */
     @GetMapping("/search")
     public String globalSearch(@RequestParam("q") String query, HttpSession session, Model model) {
-        if (session.getAttribute("loginUser") == null) {
-            return "redirect:/auth/login";
+        if (!SecurityUtils.isLoggedIn(session)) {
+            return Constants.REDIRECT_LOGIN;
         }
-
-        if (query == null || query.trim().isEmpty()) {
-            return "redirect:/";
-        }
-
-        // Search in materials
-        List<Material> materials = materialService.searchMaterials(query, null, null);
         
-        // Search in lectures
-        List<Lecture> lectures = lectureService.searchLectures(query, query, null);
-
-        model.addAttribute("query", query);
-        model.addAttribute("materials", materials);
-        model.addAttribute("lectures", lectures);
-        model.addAttribute("totalResults", materials.size() + lectures.size());
-
-        return "search/results";
+        if (query == null || query.trim().isEmpty()) {
+            return Constants.REDIRECT_HOME;
+        }
+        
+        // 검색 수행
+        SearchService.SearchResult searchResult = searchService.performGlobalSearch(query);
+        
+        // 모델에 검색 결과 추가
+        model.addAttribute("searchResult", searchResult);
+        model.addAttribute("query", searchResult.getQuery());
+        model.addAttribute("materials", searchResult.getMaterials());
+        model.addAttribute("lectures", searchResult.getLectures());
+        model.addAttribute("totalResults", searchResult.getTotalResults());
+        model.addAttribute("hasResults", searchResult.hasResults());
+        model.addAttribute("materialCount", searchResult.getMaterialCount());
+        model.addAttribute("lectureCount", searchResult.getLectureCount());
+        
+        return Constants.VIEW_SEARCH_RESULTS;
     }
 }

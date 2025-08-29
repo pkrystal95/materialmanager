@@ -1,5 +1,7 @@
 package com.example.materialmanager.controller;
 
+import com.example.materialmanager.common.Constants;
+import com.example.materialmanager.common.SecurityUtils;
 import com.example.materialmanager.domain.User;
 import com.example.materialmanager.service.FavoriteService;
 import jakarta.servlet.http.HttpSession;
@@ -18,23 +20,23 @@ public class FavoriteController {
 
     @GetMapping("/favorite/my")
     public String myFavorites(Model model, HttpSession session) {
-        User loginUser = (User) session.getAttribute("loginUser");
-        if (loginUser == null) {
-            return "redirect:/auth/login";
+        if (!SecurityUtils.isLoggedIn(session)) {
+            return Constants.REDIRECT_LOGIN;
         }
         
+        User loginUser = SecurityUtils.getCurrentUser(session);
         model.addAttribute("favorites", favoriteService.findByUserId(loginUser.getId()));
-        return "favorite/my";
+        return Constants.VIEW_FAVORITE_MY;
     }
     
     @PostMapping("/favorites/toggle/{materialId}")
     public String toggleFavorite(@PathVariable Long materialId, HttpSession session) {
-        User loginUser = (User) session.getAttribute("loginUser");
-        if (loginUser == null) {
-            return "redirect:/auth/login";
+        if (!SecurityUtils.isLoggedIn(session)) {
+            return Constants.REDIRECT_LOGIN;
         }
         
+        User loginUser = SecurityUtils.getCurrentUser(session);
         favoriteService.toggleFavorite(loginUser.getId(), materialId);
-        return "redirect:/materials";
+        return Constants.REDIRECT_MATERIALS;
     }
 }

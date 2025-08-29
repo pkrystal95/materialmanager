@@ -1,11 +1,14 @@
 package com.example.materialmanager.controller;
 
+import com.example.materialmanager.common.Constants;
+import com.example.materialmanager.common.SecurityUtils;
 import com.example.materialmanager.domain.Lecture;
 import com.example.materialmanager.service.LectureService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -24,8 +27,8 @@ public class LectureController {
                       @RequestParam(required = false) String title,
                       @RequestParam(required = false) String content,
                       HttpSession session, Model model) {
-        if (session.getAttribute("loginUser") == null) {
-            return "redirect:/auth/login";
+        if (!SecurityUtils.isLoggedIn(session)) {
+            return Constants.REDIRECT_LOGIN;
         }
 
         List<Lecture> lectures;
@@ -44,24 +47,24 @@ public class LectureController {
             lectures = lectureService.findAll();
         }
         model.addAttribute("lectures", lectures);
-        return "lecture/list";
+        return Constants.VIEW_LECTURES_LIST;
     }
 
     @GetMapping("/form")
     public String form(Model model) {
         model.addAttribute("lecture", new Lecture());
-        return "lecture/form";
+        return Constants.VIEW_LECTURES_FORM;
     }
 
     @PostMapping("/form")
     public String submit(@ModelAttribute Lecture lecture, Model model) {
         try {
             lectureService.save(lecture);
-            return "redirect:/lectures";
+            return Constants.REDIRECT_LECTURES;
         } catch (org.springframework.dao.DataAccessException e) {
             model.addAttribute("lecture", lecture);
             model.addAttribute("errorMessage", "저장 중 오류가 발생했습니다: " + e.getMostSpecificCause().getMessage());
-            return "lecture/form"; // 폼 화면으로 다시 이동
+            return Constants.VIEW_LECTURES_FORM; // 폼 화면으로 다시 이동
         }
     }
 
@@ -70,7 +73,7 @@ public class LectureController {
         Lecture lecture = lectureService.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Lecture not found"));
         model.addAttribute("lecture", lecture);
-        return "lecture/form";
+        return Constants.VIEW_LECTURES_FORM;
     }
 
     @PostMapping("/edit/{id}")
@@ -82,11 +85,11 @@ public class LectureController {
             lecture.setLectureDate(updatedLecture.getLectureDate());
             lecture.setContent(updatedLecture.getContent());
             lectureService.save(lecture);
-            return "redirect:/lectures";
+            return Constants.REDIRECT_LECTURES;
         } catch (org.springframework.dao.DataAccessException e) {
             model.addAttribute("lecture", updatedLecture);
             model.addAttribute("errorMessage", "수정 중 오류가 발생했습니다: " + e.getMostSpecificCause().getMessage());
-            return "lecture/form";
+            return Constants.VIEW_LECTURES_FORM;
         }
     }
 
