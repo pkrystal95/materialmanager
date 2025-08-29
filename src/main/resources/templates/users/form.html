@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="_fragments/header :: head">
+  <head th:replace="_fragments/layout :: head('사용자 등록 - CLD4 Archive')">
     <title>사용자 등록 - CLD4 Archive</title>
   </head>
   <body class="d-flex flex-column min-vh-100">
-    <div th:replace="_fragments/header :: header"></div>
+    <div th:replace="_fragments/layout :: header"></div>
 
     <main class="container mt-4 flex-grow-1">
       <div class="row justify-content-center">
@@ -94,7 +94,7 @@
       </div>
     </main>
 
-    <div th:replace="_fragments/footer :: footer"></div>
-    <div th:replace="_fragments/header :: scripts"></div>
+    <div th:replace="_fragments/layout :: footer"></div>
+    <div th:replace="_fragments/layout :: scripts"></div>
   </body>
 </html>

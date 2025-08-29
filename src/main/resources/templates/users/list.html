@@ -1,31 +1,64 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="_fragments/header :: head">
+  <head th:replace="_fragments/layout :: head('회원 관리 - CLD4 Archive')">
     <title>회원 관리 - CLD4 Archive</title>
   </head>
   <body class="d-flex flex-column min-vh-100">
-    <div th:replace="_fragments/header :: header"></div>
+    <div th:replace="_fragments/layout :: header"></div>
 
     <main class="container mt-4 flex-grow-1">
       <div class="row">
         <div class="col-12">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h1 class="h2 mb-0"><i class="bi bi-people"></i> 회원 관리</h1>
-            <form class="d-flex" method="get" th:action="@{/users}">
-              <input type="hidden" name="status" th:value="${activeStatus}" />
-              <input type="hidden" name="sort" th:value="${sort}" />
-              <input type="hidden" name="order" th:value="${order}" />
-              <input
-                class="form-control me-2"
-                type="search"
-                placeholder="이름/이메일 검색"
-                name="q"
-                th:value="${q}"
-              />
-              <button class="btn btn-outline-primary" type="submit">
-                <i class="bi bi-search"></i>
-              </button>
-            </form>
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h2">
+              <i class="bi bi-people text-primary"></i> 회원 관리
+            </h1>
+            <div>
+            </div>
+          </div>
+
+          <!-- Enhanced Search Section -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">
+                <i class="bi bi-search me-2"></i>회원 검색
+              </h5>
+            </div>
+            <div class="card-body">
+              <form th:action="@{/users}" method="get">
+                <input type="hidden" name="status" th:value="${activeStatus}" />
+                <input type="hidden" name="sort" th:value="${sort}" />
+                <input type="hidden" name="order" th:value="${order}" />
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="searchQuery" class="form-label">이름/이메일 검색</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="searchQuery"
+                      name="q"
+                      th:value="${q}"
+                      placeholder="회원 이름 또는 이메일 입력..."
+                    />
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">&nbsp;</label>
+                    <div class="d-grid">
+                      <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-search me-1"></i>검색
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-2" th:if="${not #strings.isEmpty(q)}">
+                  <div class="col-12">
+                    <a th:href="@{/users(status=${activeStatus}, sort=${sort}, order=${order})}" class="btn btn-outline-secondary btn-sm">
+                      <i class="bi bi-x-circle me-1"></i>검색 초기화
+                    </a>
+                  </div>
+                </div>
+              </form>
+            </div>
           </div>
           <ul class="nav nav-tabs mb-4">
             <li class="nav-item">
@@ -66,11 +99,35 @@
             </li>
           </ul>
 
-          <div
-            th:if="${users.empty}"
-            class="alert alert-light text-center border"
-          >
-            <i class="bi bi-info-circle"></i> 등록된 회원이 없습니다.
+          <!-- Search Results Info -->
+          <div class="d-flex justify-content-between align-items-center mb-3" th:unless="${users.empty}">
+            <div class="text-muted">
+              <span th:if="${not #strings.isEmpty(q)}">
+                검색 결과: <strong th:text="${#lists.size(users)}">0</strong>명의 회원
+              </span>
+              <span th:unless="${not #strings.isEmpty(q)}">
+                전체 <strong th:text="${#lists.size(users)}">0</strong>명의 회원
+              </span>
+            </div>
+          </div>
+
+          <div th:if="${users.empty}" class="text-center py-5">
+            <div class="mb-3">
+              <i class="bi bi-people" style="font-size: 3rem; color: #6c757d;"></i>
+            </div>
+            <h5 class="text-muted mb-2">
+              <span th:if="${not #strings.isEmpty(q)}">검색 결과가 없습니다</span>
+              <span th:unless="${not #strings.isEmpty(q)}">등록된 회원이 없습니다</span>
+            </h5>
+            <p class="text-muted mb-3">
+              <span th:if="${not #strings.isEmpty(q)}">다른 검색 조건을 시도해보세요.</span>
+              <span th:unless="${not #strings.isEmpty(q)}">첫 번째 회원을 등록해보세요!</span>
+            </p>
+            <div th:if="${not #strings.isEmpty(q)}">
+              <a th:href="@{/users}" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left me-1"></i>전체 회원 보기
+              </a>
+            </div>
           </div>
 
           <div th:unless="${users.empty}" class="card">
@@ -220,7 +277,7 @@
       </div>
     </main>
 
-    <div th:replace="_fragments/footer :: footer"></div>
-    <div th:replace="_fragments/header :: scripts"></div>
+    <div th:replace="_fragments/layout :: footer"></div>
+    <div th:replace="_fragments/layout :: scripts"></div>
   </body>
 </html>
