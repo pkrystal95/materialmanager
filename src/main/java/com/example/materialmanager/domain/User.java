@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 public class User {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // IDENTITY / SEQUENCE / UUID(실제로는 이걸로!)
+
     private Long id;
 
     private String name;

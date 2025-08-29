@@ -12,18 +12,27 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    // 생성자 주입
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
+    // 전체 사용자 조회
     public List<User> findAllUsers() {
         return userRepository.findAll();
     }
 
+    // id로 사용자 조회
     public Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
 
+    // 이메일로 사용자 조회 (로그인용)
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    // 사용자 저장 (회원가입)
     public User save(User user) {
         return userRepository.save(user);
     }
