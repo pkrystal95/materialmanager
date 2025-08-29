@@ -1,6 +1,7 @@
 package com.example.materialmanager.controller;
 
 import com.example.materialmanager.domain.Material;
+import com.example.materialmanager.domain.MaterialType;
 import com.example.materialmanager.service.LectureService;
 import com.example.materialmanager.service.MaterialService;
 import jakarta.servlet.http.HttpSession;
@@ -22,9 +23,11 @@ public class MaterialController {
         this.lectureService = lectureService;
     }
 
+    // 자료 목록
     @GetMapping
-    public String list(@RequestParam(required = false) Long lectureId, HttpSession session, Model model) {
-        // 로그인 여부 확인
+    public String list(@RequestParam(required = false) Long lectureId,
+                       HttpSession session,
+                       Model model) {
         if (session.getAttribute("loginUser") == null) {
             return "redirect:/auth/login";
         }
@@ -37,19 +40,23 @@ public class MaterialController {
         return "material/list";
     }
 
+    // 자료 등록 폼
     @GetMapping("/form")
     public String form(Model model) {
         model.addAttribute("material", new Material());
         model.addAttribute("lectures", lectureService.findAll());
+        model.addAttribute("types", MaterialType.values());
         return "material/form";
     }
 
+    // 자료 등록 처리
     @PostMapping("/form")
     public String submit(@Valid @ModelAttribute Material material,
                          BindingResult bindingResult,
                          Model model) {
 
         model.addAttribute("lectures", lectureService.findAll());
+        model.addAttribute("types", MaterialType.values());
 
         if (bindingResult.hasErrors()) {
             return "material/form";

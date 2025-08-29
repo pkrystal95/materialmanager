@@ -43,8 +43,12 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public String signupSubmit(@ModelAttribute User user) {
-        if (user.getRole() == null) user.setRole(Role.STUDENT); // 기본값
+    public String signupSubmit(@ModelAttribute User user, Model model) {
+        if (userService.findByEmail(user.getEmail()).isPresent()) {
+            model.addAttribute("signupError", "이미 사용 중인 이메일입니다.");
+            return "auth/signup";
+        }
+
         userService.save(user);
         return "redirect:/auth/login";
     }

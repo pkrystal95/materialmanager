@@ -11,14 +11,14 @@ public class Material {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "자료명을 입력해주세요.")
+    @NotBlank(message = "제목을 입력해주세요.")
     private String title;
 
     @NotBlank(message = "URL을 입력해주세요.")
     private String url;
 
-    @NotNull(message = "자료 타입을 선택해주세요.")
     @Enumerated(EnumType.STRING)
+    @NotNull(message = "자료 타입을 선택해주세요.")
     private MaterialType type;
 
     @ManyToOne
@@ -26,9 +26,10 @@ public class Material {
     @NotNull(message = "강의를 선택해주세요.")
     private Lecture lecture;
 
+    // 기본 생성자
     public Material() {}
 
-    // getter / setter
+    // Getter / Setter
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

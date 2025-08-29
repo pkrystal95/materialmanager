@@ -6,42 +6,31 @@
 </head>
 <body>
 
-<div th:replace="_fragments/header :: header"></div>
-
 <h1>자료 등록</h1>
 
-<form th:action="@{/materials/form}" th:object="${material}" method="post">
-  <p>자료명: <input type="text" th:field="*{title}" />
-    <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
-  </p>
+<form th:object="${material}" th:action="@{/materials/form}" method="post">
+  <label>제목:</label>
+  <input type="text" th:field="*{title}"/>
+  <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
 
-  <p>URL: <input type="text" th:field="*{url}" />
-    <span th:if="${#fields.hasErrors('url')}" th:errors="*{url}"></span>
-  </p>
+  <label>URL:</label>
+  <input type="text" th:field="*{url}"/>
+  <div th:if="${#fields.hasErrors('url')}" th:errors="*{url}"></div>
 
-  <p>자료 타입:
-    <select th:field="*{type}">
-      <option th:each="type : ${T(com.example.materialmanager.domain.MaterialType).values()}"
-              th:value="${type}" th:text="${type}"></option>
-    </select>
-    <span th:if="${#fields.hasErrors('type')}" th:errors="*{type}"></span>
-  </p>
+  <label>자료 타입:</label>
+  <select th:field="*{type}">
+    <option th:each="t : ${types}" th:value="${t}" th:text="${t}"></option>
+  </select>
+  <div th:if="${#fields.hasErrors('type')}" th:errors="*{type}"></div>
 
-  <p>강의:
-    <select th:field="*{lecture.id}">
-      <option th:each="lec : ${lectures}"
-              th:value="${lec.id}"
-              th:text="${lec.name}"></option>
-    </select>
-    <span th:if="${#fields.hasErrors('lecture')}" th:errors="*{lecture}"></span>
-  </p>
+  <label>강의:</label>
+  <select th:field="*{lecture.id}">
+    <option th:each="lec : ${lectures}" th:value="${lec.id}" th:text="${lec.name}"></option>
+  </select>
+  <div th:if="${#fields.hasErrors('lecture')}" th:errors="*{lecture}"></div>
 
   <button type="submit">등록</button>
 </form>
 
-
-
-
-<div th:replace="_fragments/footer :: footer"></div>
 </body>
 </html>

@@ -3,44 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <title>자료 목록</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+
 <div th:replace="_fragments/header :: header"></div>
 
 <h1>자료 목록</h1>
 
-<p>
-  <a th:href="@{/materials/form}">자료 등록</a>
-</p>
+<div>
+    <!-- ADMIN 또는 TEACHER 계정일 때만 등록 버튼 노출 -->
+    <a th:if="${session.loginUser != null and
+               (session.loginUser.role.name() == 'ADMIN' or session.loginUser.role.name() == 'TEACHER')}"
+       th:href="@{/materials/form}" class="btn btn-primary">
+        자료 등록
+    </a>
+</div>
+
 
 <table border="1">
   <thead>
   <tr>
-    <th>번호</th>
-    <th>자료명</th>
+    <th>제목</th>
     <th>자료 타입</th>
-    <th>강의</th>
-    <th>URL</th>
-    <th>삭제</th>
+    <th>링크</th>
   </tr>
   </thead>
   <tbody>
-  <tr th:each="material, iterStat : ${materials}">
-    <td th:text="${iterStat.count}"></td>
+  <tr th:each="material : ${materials}">
     <td th:text="${material.title}"></td>
-    <td th:text="${material.type}"></td>
-    <td th:text="${material.lecture.name}"></td>
     <td>
-      <a th:href="${material.url}" target="_blank">바로가기</a>
+        <span th:switch="${material.type.name()}">
+            <span th:case="'NOTION'">📝 Notion</span>
+            <span th:case="'CODESHARE'">💻 Codeshare</span>
+            <span th:case="'SCREENSHOT'">📸 스크린샷</span>
+            <span th:case="'PRACTICE'">🛠 실습</span>
+            <span th:case="*">❓ 알 수 없음</span>
+        </span>
     </td>
     <td>
-      <a th:href="@{'/materials/delete/' + ${material.id}}">삭제</a>
+      <a th:href="${material.url}" target="_blank">열기</a>
     </td>
   </tr>
   </tbody>
 </table>
 
-
 <div th:replace="_fragments/footer :: footer"></div>
+
 </body>
 </html>

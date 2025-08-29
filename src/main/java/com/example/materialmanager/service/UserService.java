@@ -33,8 +33,11 @@ public class UserService {
     }
 
     // 사용자 저장 (회원가입)
-    public User save(User user) {
-        return userRepository.save(user);
+    public void save(User user) {
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
+        }
+        userRepository.save(user);
     }
 
     // 사용자 수정
