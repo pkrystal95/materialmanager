@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원 수정</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- 헤더 포함 -->
+<div th:replace="_fragments/header :: header"></div>
+
+<h1>회원 수정</h1>
+
+<form th:action="@{'/users/edit/' + ${user.id}}" th:object="${user}" method="post">
+    <div>
+        <label for="name">이름:</label>
+        <input type="text" id="name" th:field="*{name}" placeholder="이름 입력" required />
+    </div>
+
+    <div>
+        <label for="email">이메일:</label>
+        <input type="email" id="email" th:field="*{email}" placeholder="이메일 입력" required />
+    </div>
+
+    <div>
+        <label for="role">역할:</label>
+        <select id="role" th:field="*{role}">
+            <option th:each="r : ${roles}" th:value="${r}" th:text="${r}"
+                    th:selected="${r} == ${user.role}"></option>
+        </select>
+    </div>
+
+    <div>
+        <button type="submit">수정</button>
+        <a th:href="@{/users}">취소</a>
+    </div>
+</form>
+
+</body>
+</html>

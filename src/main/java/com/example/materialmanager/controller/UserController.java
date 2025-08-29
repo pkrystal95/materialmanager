@@ -65,4 +65,33 @@ public class UserController {
         userService.save(user);
         return "redirect:/users";
     }
+
+    // 회원 수정 폼
+    @GetMapping("/edit/{id}")
+    public String editForm(@PathVariable Long id, HttpSession session, Model model) {
+        User loginUser = (User) session.getAttribute("loginUser");
+        if (loginUser == null || loginUser.getRole() != Role.ADMIN) {
+            return "redirect:/auth/login";
+        }
+
+        User user = userService.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        model.addAttribute("user", user);
+        model.addAttribute("roles", Role.values()); // 역할 선택용
+        return "user/edit";
+    }
+
+    // 회원 수정 처리
+    @PostMapping("/edit/{id}")
+    public String editSubmit(@PathVariable Long id,
+                             @ModelAttribute User updatedUser,
+                             HttpSession session) {
+        User loginUser = (User) session.getAttribute("loginUser");
+        if (loginUser == null || loginUser.getRole() != Role.ADMIN) {
+            return "redirect:/auth/login";
+        }
+
+        userService.update(id, updatedUser);
+        return "redirect:/users";
+    }
+
 }

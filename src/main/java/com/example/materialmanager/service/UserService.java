@@ -37,6 +37,17 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    // 사용자 수정
+    public void update(Long id, User updatedUser) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        user.setName(updatedUser.getName());
+        user.setEmail(updatedUser.getEmail());
+        user.setRole(updatedUser.getRole());
+        userRepository.save(user);
+    }
+
     // 사용자 삭제
     public void delete(Long id) {
         userRepository.deleteById(id);
