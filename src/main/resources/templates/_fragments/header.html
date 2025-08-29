@@ -10,6 +10,10 @@
     <ul>
       <li><a th:href="@{/lectures}">강의</a></li>
       <li><a th:href="@{/materials}">자료</a></li>
+      <!-- 관리자만 사용자 관리 메뉴 표시 -->
+      <a th:if="${session.loginUser != null} and ${session.loginUser.role != null} and ${session.loginUser.role.name() == 'ADMIN'}"
+         th:href="@{/users}">사용자 관리</a>
+
       <li th:if="${session.loginUser == null}"><a th:href="@{/auth/login}">로그인</a></li>
       <li th:if="${session.loginUser == null}"><a th:href="@{/auth/signup}">회원가입</a></li>
       <li th:if="${session.loginUser != null}">

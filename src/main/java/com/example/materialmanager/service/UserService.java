@@ -18,7 +18,7 @@ public class UserService {
     }
 
     // 전체 사용자 조회
-    public List<User> findAllUsers() {
+    public List<User> findAll() {
         return userRepository.findAll();
     }
 
@@ -35,5 +35,10 @@ public class UserService {
     // 사용자 저장 (회원가입)
     public User save(User user) {
         return userRepository.save(user);
+    }
+
+    // 사용자 삭제
+    public void delete(Long id) {
+        userRepository.deleteById(id);
     }
 }

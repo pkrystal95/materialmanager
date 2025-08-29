@@ -1,7 +1,9 @@
 package com.example.materialmanager.controller;
 
+import com.example.materialmanager.domain.Role;
 import com.example.materialmanager.domain.User;
 import com.example.materialmanager.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,12 +20,28 @@ public class UserController {
         this.userService = userService;
     }
 
-    // 모든 사용자 리스트
+    // 회원 목록 조회 (관리자 전용)
     @GetMapping
-    public String list(Model model) {
-        List<User> users = userService.findAllUsers();
-        model.addAttribute("users", users);
+    public String list(HttpSession session, Model model) {
+        User loginUser = (User) session.getAttribute("loginUser");
+        if (loginUser == null || loginUser.getRole() != Role.ADMIN) {
+            return "redirect:/auth/login";
+        }
+
+        model.addAttribute("users", userService.findAll());
         return "user/list";
+    }
+
+    // 회원 삭제 (관리자 전용)
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable Long id, HttpSession session) {
+        User loginUser = (User) session.getAttribute("loginUser");
+        if (loginUser == null || loginUser.getRole() != Role.ADMIN) {
+            return "redirect:/auth/login";
+        }
+
+        userService.delete(id);
+        return "redirect:/users";
     }
 
     // 사용자 상세보기

@@ -6,8 +6,8 @@
   <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<h1>사용자 리스트</h1>
-<a th:href="@{/users/form}">사용자 등록</a>
+<h1>회원 관리</h1>
+
 <table border="1">
   <thead>
   <tr>
@@ -15,18 +15,23 @@
     <th>이름</th>
     <th>이메일</th>
     <th>역할</th>
-    <th>상세</th>
+    <th>가입일</th>
+    <th>삭제</th>
   </tr>
   </thead>
   <tbody>
   <tr th:each="user : ${users}">
-    <td th:text="${user.id}">1</td>
-    <td th:text="${user.name}">홍길동</td>
-    <td th:text="${user.email}">email@example.com</td>
-    <td th:text="${user.role}">STUDENT</td>
-    <td><a th:href="@{'/users/' + ${user.id}}">상세보기</a></td>
+    <td th:text="${user.id}"></td>
+    <td th:text="${user.name}"></td>
+    <td th:text="${user.email}"></td>
+    <td th:text="${user.role}"></td>
+    <td th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+    <td>
+      <a th:href="@{'/users/delete/' + ${user.id}}">삭제</a>
+    </td>
   </tr>
   </tbody>
 </table>
+
 </body>
 </html>
