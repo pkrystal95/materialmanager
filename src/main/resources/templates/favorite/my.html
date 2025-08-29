@@ -1,27 +1,89 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <title>My Favorites</title>
+<head th:replace="_fragments/header :: head">
+  <title>내 즐겨찾기 - Material Manager</title>
 </head>
-<body>
-<h1>내 즐겨찾기 자료</h1>
-<table border="1">
-  <thead>
-  <tr>
-    <th>ID</th>
-    <th>사용자 ID</th>
-    <th>자료 ID</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr th:each="fav : ${favorites}">
-    <td th:text="${fav.id}">1</td>
-    <td th:text="${fav.user.id}">1</td>
-    <td th:text="${fav.material.id}">10</td>
-  </tr>
-  </tbody>
-</table>
-<a th:href="@{/}">메인으로</a>
+<body class="d-flex flex-column min-vh-100">
+
+<div th:replace="_fragments/header :: header"></div>
+
+<main class="container mt-4 flex-grow-1">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">
+          <i class="bi bi-heart-fill text-danger"></i> 내 즐겨찾기
+        </h1>
+        <div>
+          <a th:href="@{/materials}" class="btn btn-outline-primary">
+            <i class="bi bi-plus-circle"></i> 자료 둘러보기
+          </a>
+        </div>
+      </div>
+
+      <div th:if="${favorites.empty}" class="alert alert-info text-center">
+        <i class="bi bi-heart"></i> 
+        <h4 class="alert-heading">즐겨찾기가 비어있어요</h4>
+        <p>마음에 드는 자료를 즐겨찾기에 추가해보세요!</p>
+        <hr>
+        <a th:href="@{/materials}" class="btn btn-primary">
+          <i class="bi bi-search"></i> 자료 찾아보기
+        </a>
+      </div>
+
+      <div th:unless="${favorites.empty}" class="row">
+        <div th:each="fav : ${favorites}" class="col-lg-4 col-md-6 mb-4">
+          <div class="card h-100 shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <span th:switch="${fav.material.type.name()}" class="badge fs-6">
+                <span th:case="'NOTION'" class="badge bg-primary">📝 Notion</span>
+                <span th:case="'CODESHARE'" class="badge bg-success">💻 Codeshare</span>
+                <span th:case="'SCREENSHOT'" class="badge bg-info">📸 스크린샷</span>
+                <span th:case="'PRACTICE'" class="badge bg-warning">🛠 실습</span>
+                <span th:case="*" class="badge bg-secondary">❓ 알 수 없음</span>
+              </span>
+              <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <form th:action="@{'/favorites/toggle/' + ${fav.material.id}}" method="post" class="d-inline">
+                      <button type="submit" class="dropdown-item text-danger">
+                        <i class="bi bi-heart-fill"></i> 즐겨찾기 해제
+                      </button>
+                    </form>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title" th:text="${fav.material.title}">자료 제목</h5>
+              <p class="card-text text-muted" th:if="${fav.material.lecture != null}">
+                <i class="bi bi-calendar-event"></i> 
+                <span th:text="${fav.material.lecture.title}">강의명</span>
+              </p>
+              <p class="card-text">
+                <small class="text-muted">
+                  <i class="bi bi-heart"></i> 
+                  <span th:text="${#temporals.format(fav.createdAt, 'yyyy년 MM월 dd일 HH:mm')}">즐겨찾기 날짜</span>
+                </small>
+              </p>
+            </div>
+            <div class="card-footer bg-transparent">
+              <a th:href="${fav.material.url}" target="_blank" class="btn btn-outline-primary w-100">
+                <i class="bi bi-box-arrow-up-right"></i> 자료 열기
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div th:replace="_fragments/footer :: footer"></div>
+<div th:replace="_fragments/header :: scripts"></div>
+
 </body>
 </html>

@@ -1,51 +1,116 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <title>강의 목록</title>
-  <link rel="stylesheet" th:href="@{/css/style.css}">
+<head th:replace="_fragments/header :: head">
+  <title>강의 목록 - Material Manager</title>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
-<!-- 헤더 포함 -->
 <div th:replace="_fragments/header :: header"></div>
 
-<h1>강의 목록</h1>
+<main class="container mt-4 flex-grow-1">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">
+          <i class="bi bi-calendar-event text-primary"></i> 강의 목록
+        </h1>
+        <div>
+          <a th:if="${session.loginUser != null and
+                     (session.loginUser.role.name() == 'ADMIN' or session.loginUser.role.name() == 'TEACHER')}"
+             th:href="@{/lectures/form}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> 강의 등록
+          </a>
+        </div>
+      </div>
 
-<form th:action="@{/lectures}" method="get">
-  <input type="date" name="date">
-  <button type="submit">검색</button>
-</form>
+      <!-- 날짜 검색 폼 -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <form th:action="@{/lectures}" method="get" class="row g-3 align-items-end">
+            <div class="col-auto">
+              <label for="searchDate" class="form-label">날짜로 검색</label>
+              <input type="date" class="form-control" id="searchDate" name="date" th:value="${param.date}">
+            </div>
+            <div class="col-auto">
+              <button type="submit" class="btn btn-outline-primary">
+                <i class="bi bi-search"></i> 검색
+              </button>
+            </div>
+            <div class="col-auto" th:if="${param.date}">
+              <a th:href="@{/lectures}" class="btn btn-outline-secondary">
+                <i class="bi bi-x-circle"></i> 초기화
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
 
-<a th:href="@{/lectures/form}">강의 등록</a>
+      <div th:if="${lectures.empty}" class="alert alert-info text-center">
+        <i class="bi bi-info-circle"></i> 
+        <span th:if="${param.date}">해당 날짜에 등록된 강의가 없습니다.</span>
+        <span th:unless="${param.date}">등록된 강의가 없습니다.</span>
+      </div>
 
-<table border="1">
-  <thead>
-  <tr>
-    <th>ID</th>
-    <th>제목</th>
-    <th>날짜</th>
-    <th>내용</th>
-    <th>관리</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr th:each="lecture : ${lectures}">
-    <td th:text="${lecture.id}"></td>
-    <td th:text="${lecture.title}"></td>
-    <td th:text="${lecture.lectureDate}"></td>
-    <td th:text="${lecture.content}"></td>
-    <td>
-      <a th:href="@{'/lectures/edit/' + ${lecture.id}}">수정</a>
-      <a th:href="@{'/lectures/delete/' + ${lecture.id}}">삭제</a>
-    </td>
-  </tr>
-  </tbody>
-</table>
+      <!-- 강의 목록 -->
+      <div th:unless="${lectures.empty}" class="row">
+        <div th:each="lecture : ${lectures}" class="col-lg-6 col-md-12 mb-4">
+          <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <span class="text-muted">
+                <i class="bi bi-calendar3"></i> 
+                <span th:text="${#temporals.format(lecture.lectureDate, 'yyyy년 MM월 dd일')}">날짜</span>
+              </span>
+              <div class="dropdown" th:if="${session.loginUser != null and
+                                          (session.loginUser.role.name() == 'ADMIN' or session.loginUser.role.name() == 'TEACHER')}">
+                <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a class="dropdown-item" th:href="@{'/lectures/edit/' + ${lecture.id}}">
+                      <i class="bi bi-pencil"></i> 수정
+                    </a>
+                  </li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li>
+                    <a class="dropdown-item text-danger" th:href="@{'/lectures/delete/' + ${lecture.id}}"
+                       onclick="return confirm('정말 삭제하시겠습니까?')">
+                      <i class="bi bi-trash"></i> 삭제
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title" th:text="${lecture.title}">강의 제목</h5>
+              <p class="card-text" th:text="${lecture.content}">강의 내용</p>
+              <div th:if="${lecture.materials != null and !lecture.materials.empty}" class="mt-3">
+                <h6 class="text-muted mb-2">
+                  <i class="bi bi-paperclip"></i> 관련 자료 
+                  <span class="badge bg-secondary" th:text="${lecture.materials.size()}">0</span>
+                </h6>
+                <div class="d-flex flex-wrap gap-1">
+                  <span th:each="material : ${lecture.materials}" 
+                        th:switch="${material.type.name()}" 
+                        class="badge">
+                    <span th:case="'NOTION'" class="badge bg-primary">📝</span>
+                    <span th:case="'CODESHARE'" class="badge bg-success">💻</span>
+                    <span th:case="'SCREENSHOT'" class="badge bg-info">📸</span>
+                    <span th:case="'PRACTICE'" class="badge bg-warning">🛠</span>
+                    <span th:case="*" class="badge bg-secondary">❓</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
 
-<!-- 푸터 포함 -->
 <div th:replace="_fragments/footer :: footer"></div>
-
+<div th:replace="_fragments/header :: scripts"></div>
 
 </body>
 </html>
