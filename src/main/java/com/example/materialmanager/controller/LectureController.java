@@ -42,9 +42,15 @@ public class LectureController {
     }
 
     @PostMapping("/form")
-    public String submit(@ModelAttribute Lecture lecture) {
-        lectureService.save(lecture);
-        return "redirect:/lectures";
+    public String submit(@ModelAttribute Lecture lecture, Model model) {
+        try {
+            lectureService.save(lecture);
+            return "redirect:/lectures";
+        } catch (org.springframework.dao.DataAccessException e) {
+            model.addAttribute("lecture", lecture);
+            model.addAttribute("errorMessage", "저장 중 오류가 발생했습니다: " + e.getMostSpecificCause().getMessage());
+            return "lecture/form"; // 폼 화면으로 다시 이동
+        }
     }
 
     @GetMapping("/edit/{id}")
@@ -56,15 +62,22 @@ public class LectureController {
     }
 
     @PostMapping("/edit/{id}")
-    public String editSubmit(@PathVariable Long id, @ModelAttribute Lecture updatedLecture) {
-        Lecture lecture = lectureService.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Lecture not found"));
-        lecture.setTitle(updatedLecture.getTitle());
-        lecture.setLectureDate(updatedLecture.getLectureDate());
-        lecture.setContent(updatedLecture.getContent());
-        lectureService.save(lecture);
-        return "redirect:/lectures";
+    public String editSubmit(@PathVariable Long id, @ModelAttribute Lecture updatedLecture, Model model) {
+        try {
+            Lecture lecture = lectureService.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Lecture not found"));
+            lecture.setTitle(updatedLecture.getTitle());
+            lecture.setLectureDate(updatedLecture.getLectureDate());
+            lecture.setContent(updatedLecture.getContent());
+            lectureService.save(lecture);
+            return "redirect:/lectures";
+        } catch (org.springframework.dao.DataAccessException e) {
+            model.addAttribute("lecture", updatedLecture);
+            model.addAttribute("errorMessage", "수정 중 오류가 발생했습니다: " + e.getMostSpecificCause().getMessage());
+            return "lecture/form";
+        }
     }
+
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
