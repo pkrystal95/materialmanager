@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Lecture List</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<h1>강의 리스트</h1>
+<a th:href="@{/lectures/form}">강의 등록</a>
+<table border="1">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>제목</th>
+    <th>설명</th>
+    <th>강사</th>
+    <th>상세</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="lecture : ${lectures}">
+    <td th:text="${lecture.id}">1</td>
+    <td th:text="${lecture.title}">Java Basics</td>
+    <td th:text="${lecture.description}">강의 설명</td>
+    <td th:text="${lecture.teacher.name}">강사 이름</td>
+    <td><a th:href="@{'/lectures/' + ${lecture.id}}">상세보기</a></td>
+  </tr>
+  </tbody>
+</table>
+<a th:href="@{/}">메인으로</a>
+</body>
+</html>

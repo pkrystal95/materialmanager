@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>My Favorites</title>
+</head>
+<body>
+<h1>내 즐겨찾기 자료</h1>
+<table border="1">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>사용자 ID</th>
+    <th>자료 ID</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="fav : ${favorites}">
+    <td th:text="${fav.id}">1</td>
+    <td th:text="${fav.user.id}">1</td>
+    <td th:text="${fav.material.id}">10</td>
+  </tr>
+  </tbody>
+</table>
+<a th:href="@{/}">메인으로</a>
+</body>
+</html>

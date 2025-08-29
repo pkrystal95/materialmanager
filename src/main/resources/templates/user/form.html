@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>User Form</title>
+</head>
+<body>
+<h1>사용자 등록</h1>
+<form th:action="@{/users}" th:object="${user}" method="post">
+  <p>
+    이름: <input type="text" th:field="*{name}" />
+  </p>
+  <p>
+    이메일: <input type="email" th:field="*{email}" />
+  </p>
+  <p>
+    비밀번호: <input type="password" th:field="*{password}" />
+  </p>
+  <p>
+    역할:
+    <select th:field="*{role}">
+      <option value="STUDENT">STUDENT</option>
+      <option value="TEACHER">TEACHER</option>
+      <option value="ADMIN">ADMIN</option>
+    </select>
+  </p>
+  <button type="submit">등록</button>
+</form>
+<a th:href="@{/users}">목록으로</a>
+</body>
+</html>
