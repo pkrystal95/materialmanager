@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+<header>
+  <h1><a th:href="@{/}">Material Manager</a></h1>
+  <nav>
+    <ul>
+      <li><a th:href="@{/users}">사용자</a></li>
+      <li><a th:href="@{/lectures}">강의</a></li>
+      <li><a th:href="@{/materials?lectureId=1}">자료</a></li>
+      <li><a th:href="@{/favorite/my}">즐겨찾기</a></li>
+      <li><a th:href="@{/auth/login}">로그인</a></li>
+    </ul>
+  </nav>
+  <hr>
+</header>
+</body>
+</html>
