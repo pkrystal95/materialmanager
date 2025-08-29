@@ -3,8 +3,14 @@ package com.example.materialmanager.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Material {
 
     @Id
@@ -25,22 +31,4 @@ public class Material {
     @JoinColumn(name = "lecture_id")
     @NotNull(message = "강의를 선택해주세요.")
     private Lecture lecture;
-
-    public Material() {}
-
-    // Getter / Setter
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-
-    public String getUrl() { return url; }
-    public void setUrl(String url) { this.url = url; }
-
-    public MaterialType getType() { return type; }
-    public void setType(MaterialType type) { this.type = type; }
-
-    public Lecture getLecture() { return lecture; }
-    public void setLecture(Lecture lecture) { this.lecture = lecture; }
 }
