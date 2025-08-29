@@ -29,41 +29,43 @@
             <i class="bi bi-info-circle"></i> 등록된 자료가 없습니다.
           </div>
 
+          <!-- Materials Grid -->
           <div th:unless="${materials.empty}" class="row">
             <div
               th:each="material : ${materials}"
-              class="col-lg-4 col-md-6 mb-4"
+              class="col-xl-3 col-lg-4 col-md-6 mb-4"
             >
-              <div class="card h-100">
-                <div
-                  class="card-header d-flex justify-content-between align-items-center"
-                >
-                  <span th:switch="${material.type.name()}" class="badge fs-6">
-                    <span th:case="'NOTION'" class="badge bg-primary"
-                      >📝 Notion</span
-                    >
-                    <span th:case="'CODESHARE'" class="badge bg-success"
-                      >💻 Codeshare</span
-                    >
-                    <span th:case="'SCREENSHOT'" class="badge bg-info"
-                      >📸 스크린샷</span
-                    >
-                    <span th:case="'PRACTICE'" class="badge bg-warning"
-                      >🛠 Gist</span
-                    >
-                    <span th:case="*" class="badge bg-secondary"
-                      >❓ 알 수 없음</span
-                    >
-                  </span>
+              <div class="card material-card h-100 border-0">
+                <div class="card-header border-0 d-flex justify-content-between align-items-start">
+                  <div>
+                    <span th:switch="${material.type.name()}" class="badge material-badge">
+                      <span th:case="'NOTION'" class="badge badge-notion">
+                        📝 Notion
+                      </span>
+                      <span th:case="'CODESHARE'" class="badge badge-codeshare">
+                        💻 Codeshare
+                      </span>
+                      <span th:case="'SCREENSHOT'" class="badge badge-screenshot">
+                        📸 스크린샷
+                      </span>
+                      <span th:case="'PRACTICE'" class="badge badge-practice">
+                        🛠 Gist
+                      </span>
+                      <span th:case="*" class="badge bg-secondary">
+                        ❓ 기타
+                      </span>
+                    </span>
+                  </div>
                   <div class="dropdown">
                     <button
-                      class="btn btn-sm btn-outline-secondary"
+                      class="btn btn-sm btn-light border-0"
                       type="button"
                       data-bs-toggle="dropdown"
+                      style="width: 32px; height: 32px; padding: 0;"
                     >
                       <i class="bi bi-three-dots-vertical"></i>
                     </button>
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu shadow-sm">
                       <li>
                         <form
                           th:action="@{'/favorites/toggle/' + ${material.id}}"
@@ -71,32 +73,40 @@
                           class="d-inline"
                         >
                           <button type="submit" class="dropdown-item">
-                            <i class="bi bi-heart"></i> 즐겨찾기
+                            <i class="bi bi-heart me-2"></i>즐겨찾기 추가
                           </button>
                         </form>
+                      </li>
+                      <li><hr class="dropdown-divider"></li>
+                      <li>
+                        <a class="dropdown-item" th:href="${material.url}" target="_blank">
+                          <i class="bi bi-box-arrow-up-right me-2"></i>새 탭에서 열기
+                        </a>
                       </li>
                     </ul>
                   </div>
                 </div>
                 <div class="card-body">
-                  <h5 class="card-title" th:text="${material.title}">
+                  <h5 class="card-title material-title" th:text="${material.title}">
                     자료 제목
                   </h5>
-                  <p
-                    class="card-text text-muted"
+                  <div
+                    class="lecture-info mb-3"
                     th:if="${material.lecture != null}"
                   >
-                    <i class="bi bi-calendar-event"></i>
-                    <span th:text="${material.lecture.title}">강의명</span>
-                  </p>
+                    <span class="badge bg-light text-dark border">
+                      <i class="bi bi-calendar-event me-1"></i>
+                      <span th:text="${material.lecture.title}">강의명</span>
+                    </span>
+                  </div>
                 </div>
-                <div class="card-footer bg-transparent">
+                <div class="card-footer border-0 bg-transparent pt-0">
                   <a
                     th:href="${material.url}"
                     target="_blank"
-                    class="btn btn-outline-primary w-100"
+                    class="btn btn-primary w-100 material-btn"
                   >
-                    <i class="bi bi-box-arrow-up-right"></i> 자료 열기
+                    <i class="bi bi-arrow-up-right me-2"></i>자료 확인
                   </a>
                 </div>
               </div>
@@ -106,7 +116,55 @@
       </div>
     </main>
 
-    <div th:replace="_fragments/footer :: footer"></div>
-    <div th:replace="_fragments/header :: scripts"></div>
+    <div th:replace="_fragments/layout :: footer"></div>
+    <div th:replace="_fragments/layout :: scripts"></div>
+    
+    <style>
+      .material-card {
+        transition: all 0.3s ease;
+        border-radius: 12px;
+      }
+      .material-card:hover {
+        transform: translateY(-4px);
+      }
+      .material-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        margin-bottom: 1rem;
+      }
+      .material-badge {
+        font-size: 0.8rem;
+        font-weight: 500;
+      }
+      .badge-notion {
+        background-color: #000 !important;
+        color: white !important;
+      }
+      .badge-codeshare {
+        background-color: #28a745 !important;
+        color: white !important;
+      }
+      .badge-screenshot {
+        background-color: #17a2b8 !important;
+        color: white !important;
+      }
+      .badge-practice {
+        background-color: #ffc107 !important;
+        color: #212529 !important;
+      }
+      .lecture-info {
+        font-size: 0.9rem;
+      }
+      .material-btn {
+        font-weight: 500;
+        border-radius: 8px;
+      }
+      @media (max-width: 768px) {
+        .col-xl-3 {
+          margin-bottom: 1rem !important;
+        }
+      }
+    </style>
   </body>
 </html>

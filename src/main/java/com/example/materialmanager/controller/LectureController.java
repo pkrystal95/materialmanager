@@ -20,14 +20,22 @@ public class LectureController {
     }
 
     @GetMapping
-    public String list(@RequestParam(required = false) String date, HttpSession session, Model model) {
+    public String list(@RequestParam(required = false) String date,
+                      @RequestParam(required = false) String title,
+                      @RequestParam(required = false) String content,
+                      HttpSession session, Model model) {
         if (session.getAttribute("loginUser") == null) {
             return "redirect:/auth/login";
         }
 
         List<Lecture> lectures;
-        if (date != null && !date.isEmpty()) {
-            lectures = lectureService.findByDate(java.time.LocalDate.parse(date));
+        // Enhanced search functionality
+        if (title != null || content != null || (date != null && !date.isEmpty())) {
+            java.time.LocalDate parsedDate = null;
+            if (date != null && !date.isEmpty()) {
+                parsedDate = java.time.LocalDate.parse(date);
+            }
+            lectures = lectureService.searchLectures(title, content, parsedDate);
         } else {
             lectures = lectureService.findAll();
         }

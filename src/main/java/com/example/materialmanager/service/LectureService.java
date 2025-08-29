@@ -35,4 +35,12 @@ public class LectureService {
     public List<Lecture> findByDate(LocalDate date) {
         return lectureRepository.findByLectureDate(date);
     }
+    
+    public List<Lecture> searchLectures(String title, String content, LocalDate date) {
+        // Handle empty strings as null for the search
+        String searchTitle = (title != null && title.trim().isEmpty()) ? null : title;
+        String searchContent = (content != null && content.trim().isEmpty()) ? null : content;
+        
+        return lectureRepository.findLecturesBySearch(searchTitle, searchContent, date);
+    }
 }

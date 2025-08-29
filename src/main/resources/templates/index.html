@@ -6,66 +6,105 @@
     <div th:replace="_fragments/layout :: header"></div>
 
     <main class="container mt-4 flex-grow-1">
-      <div class="jumbotron bg-white p-5 rounded text-center border">
-        <h1 class="display-4"><i class="bi bi-book-half"></i> 강의 자료 아카이브</h1>
-        <p class="lead">멋쟁이 사자차럼 클라우드 엔지니어링 4기 부트캠프</p>
+      <!-- Hero Section -->
+      <div class="text-center mb-5">
+        <div class="hero-content p-5 rounded-4" style="background: linear-gradient(135deg, rgba(255, 96, 0, 0.1) 0%, rgba(255, 96, 0, 0.05) 100%); border: 2px solid rgba(255, 96, 0, 0.1);">
+          <div class="hero-icon mb-3">
+            <i class="bi bi-book-half" style="font-size: 4rem; color: #ff6000;"></i>
+          </div>
+          <h1 class="display-4 fw-bold mb-3" style="color: #2c3e50;">강의 자료 아카이브</h1>
+          <p class="lead text-muted mb-4">멋쟁이 사자처럼 클라우드 엔지니어링 4기 부트캠프</p>
+          <div class="d-flex justify-content-center gap-3 flex-wrap" th:if="${session.loginUser != null}">
+            <a th:href="@{/materials}" class="btn btn-primary btn-lg px-4">
+              <i class="bi bi-file-earmark-text me-2"></i>자료 둘러보기
+            </a>
+            <a th:href="@{/lectures}" class="btn btn-outline-primary btn-lg px-4">
+              <i class="bi bi-calendar-event me-2"></i>강의 일정
+            </a>
+          </div>
+        </div>
       </div>
 
-      <div class="row mt-5" th:if="${session.loginUser != null}">
+      <!-- Welcome Message -->
+      <div class="row" th:if="${session.loginUser != null}">
         <div class="col-12 mb-4">
-          <div class="alert alert-success">
-            <i class="bi bi-person-check"></i> 환영합니다,
-            <strong th:text="${session.loginUser.name}">사용자</strong>님!
-          </div>
-        </div>
-
-        <div class="col-md-4 mb-4">
-          <div class="card h-100 text-center">
-            <div class="card-body">
-              <i class="bi bi-calendar-event display-4 text-primary"></i>
-              <h5 class="card-title mt-3">강의 관리</h5>
-              <p class="card-text">강의 일정과 내용을 관리합니다.</p>
-              <a th:href="@{/lectures}" class="btn btn-primary">강의 목록</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-4 mb-4">
-          <div class="card h-100 text-center">
-            <div class="card-body">
-              <i class="bi bi-file-earmark-text display-4 text-primary"></i>
-              <h5 class="card-title mt-3">자료 관리</h5>
-              <p class="card-text">교육 자료를 등록하고 관리합니다.</p>
-              <a th:href="@{/materials}" class="btn btn-primary">자료 목록</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-4 mb-4">
-          <div class="card h-100 text-center">
-            <div class="card-body">
-              <i class="bi bi-heart display-4 text-primary"></i>
-              <h5 class="card-title mt-3">즐겨찾기</h5>
-              <p class="card-text">자주 사용하는 자료를 모아봅니다.</p>
-              <a th:href="@{/favorite/my}" class="btn btn-primary">즐겨찾기</a>
+          <div class="alert alert-primary d-flex align-items-center">
+            <i class="bi bi-person-check-fill me-3" style="font-size: 1.5rem;"></i>
+            <div>
+              <h5 class="mb-1">환영합니다, <strong th:text="${session.loginUser.name}">사용자</strong>님!</h5>
+              <p class="mb-0 text-muted">오늘도 멋진 학습 여정을 시작해보세요.</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="row mt-5" th:if="${session.loginUser == null}">
-        <div class="col-12">
-          <div class="alert alert-light text-center border">
-            <i class="bi bi-info-circle"></i>
-            <h4 class="alert-heading">로그인이 필요합니다</h4>
-            <p>CLD4 Archive를 사용하려면 로그인이 필요합니다.</p>
-            <hr />
-            <a th:href="@{/auth/login}" class="btn btn-primary"
-              ><i class="bi bi-box-arrow-in-right"></i> 로그인</a
-            >
-            <a th:href="@{/auth/signup}" class="btn btn-outline-primary ms-2"
-              ><i class="bi bi-person-plus"></i> 회원가입</a
-            >
+      <!-- Feature Cards -->
+      <div class="row" th:if="${session.loginUser != null}">
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="card feature-card h-100 text-center border-0">
+            <div class="card-body p-4">
+              <div class="feature-icon mb-3">
+                <i class="bi bi-calendar-event" style="font-size: 3rem; color: #ff6000;"></i>
+              </div>
+              <h5 class="card-title fw-bold mb-3">강의 관리</h5>
+              <p class="card-text text-muted mb-4">강의 일정과 내용을 체계적으로 관리하고 확인할 수 있습니다.</p>
+              <a th:href="@{/lectures}" class="btn btn-primary w-100">
+                <i class="bi bi-arrow-right me-2"></i>강의 목록 보기
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="card feature-card h-100 text-center border-0">
+            <div class="card-body p-4">
+              <div class="feature-icon mb-3">
+                <i class="bi bi-file-earmark-text" style="font-size: 3rem; color: #28a745;"></i>
+              </div>
+              <h5 class="card-title fw-bold mb-3">자료 관리</h5>
+              <p class="card-text text-muted mb-4">다양한 교육 자료를 한 곳에서 쉽게 찾고 관리할 수 있습니다.</p>
+              <a th:href="@{/materials}" class="btn btn-primary w-100">
+                <i class="bi bi-arrow-right me-2"></i>자료 목록 보기
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="card feature-card h-100 text-center border-0">
+            <div class="card-body p-4">
+              <div class="feature-icon mb-3">
+                <i class="bi bi-heart-fill" style="font-size: 3rem; color: #dc3545;"></i>
+              </div>
+              <h5 class="card-title fw-bold mb-3">즐겨찾기</h5>
+              <p class="card-text text-muted mb-4">자주 사용하는 자료를 즐겨찾기로 저장하여 빠르게 접근하세요.</p>
+              <a th:href="@{/favorite/my}" class="btn btn-primary w-100">
+                <i class="bi bi-arrow-right me-2"></i>즐겨찾기 보기
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Login Required -->
+      <div class="row justify-content-center" th:if="${session.loginUser == null}">
+        <div class="col-lg-6 col-md-8">
+          <div class="card border-0 shadow-lg">
+            <div class="card-body p-5 text-center">
+              <div class="mb-4">
+                <i class="bi bi-shield-lock" style="font-size: 4rem; color: #6c757d;"></i>
+              </div>
+              <h3 class="card-title fw-bold mb-3">로그인이 필요합니다</h3>
+              <p class="text-muted mb-4">CLD4 Archive의 모든 기능을 사용하려면<br>로그인이 필요합니다.</p>
+              <div class="d-grid gap-2">
+                <a th:href="@{/auth/login}" class="btn btn-primary btn-lg">
+                  <i class="bi bi-box-arrow-in-right me-2"></i>로그인
+                </a>
+                <a th:href="@{/auth/signup}" class="btn btn-outline-primary btn-lg">
+                  <i class="bi bi-person-plus me-2"></i>회원가입
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </div>

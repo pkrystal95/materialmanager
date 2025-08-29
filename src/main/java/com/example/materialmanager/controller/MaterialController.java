@@ -24,16 +24,23 @@ public class MaterialController {
     }
 
     @GetMapping
-    public String list(@RequestParam(required = false) Long lectureId, HttpSession session, Model model) {
+    public String list(@RequestParam(required = false) Long lectureId,
+                      @RequestParam(required = false) String title,
+                      @RequestParam(required = false) String type,
+                      HttpSession session, Model model) {
         if (session.getAttribute("loginUser") == null) {
             return "redirect:/auth/login";
         }
 
-        if (lectureId != null) {
-            model.addAttribute("materials", materialService.findByLectureId(lectureId));
+        // Search functionality
+        if (title != null || type != null || lectureId != null) {
+            model.addAttribute("materials", materialService.searchMaterials(title, type, lectureId));
         } else {
             model.addAttribute("materials", materialService.findAll());
         }
+        
+        // Add lectures for dropdown
+        model.addAttribute("lectures", lectureService.findAll());
         return "material/list";
     }
 
