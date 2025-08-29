@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>강의 등록</title>
+</head>
+<body>
+
+<div th:replace="_fragments/header :: header"></div>
+
+<h1>강의 등록</h1>
+
+<form th:action="@{/lectures/form}" th:object="${lecture}" method="post">
+  <p>강의명: <input type="text" th:field="*{name}" /></p>
+  <p>강사: <input type="text" th:field="*{teacher}" /></p>
+  <button type="submit">등록</button>
+</form>
+
+
+<div th:replace="_fragments/footer :: footer"></div>
+</body>
+</html>

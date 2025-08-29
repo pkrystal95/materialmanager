@@ -15,11 +15,23 @@ public class MaterialService {
         this.materialRepository = materialRepository;
     }
 
-    public List<Material> findByLectureId(Long lectureId) {
-        return materialRepository.findByLectureIdOrderByUploadDateDesc(lectureId);
+    // 모든 자료 조회
+    public List<Material> findAll() {
+        return materialRepository.findAll();
     }
 
+    // 강의별 자료 조회
+    public List<Material> findByLectureId(Long lectureId) {
+        return materialRepository.findByLectureId(lectureId);
+    }
+
+    // 자료 저장/등록
     public Material save(Material material) {
         return materialRepository.save(material);
+    }
+
+    // 자료 삭제
+    public void delete(Long id) {
+        materialRepository.deleteById(id);
     }
 }

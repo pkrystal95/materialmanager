@@ -1,5 +1,6 @@
 package com.example.materialmanager.controller;
 
+import com.example.materialmanager.domain.Role;
 import com.example.materialmanager.domain.User;
 import com.example.materialmanager.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -13,26 +14,10 @@ public class AuthController {
 
     private final UserService userService;
 
-    public AuthController(UserService userService) {
-        this.userService = userService;
-    }
+    public AuthController(UserService userService) { this.userService = userService; }
 
     @GetMapping("/login")
-    public String login() {
-        return "auth/login";
-    }
-
-    @GetMapping("/signup")
-    public String signupForm(Model model) {
-        model.addAttribute("user", new User());
-        return "auth/signup";
-    }
-
-    @PostMapping("/signup")
-    public String signupSubmit(@ModelAttribute User user) {
-        userService.save(user);
-        return "redirect:/auth/login";
-    }
+    public String login() { return "auth/login"; }
 
     @PostMapping("/login")
     public String login(@RequestParam String email,
@@ -41,22 +26,32 @@ public class AuthController {
                         Model model) {
 
         User user = userService.findByEmail(email).orElse(null);
-
         if (user == null || !user.getPassword().equals(password)) {
             model.addAttribute("loginError", "이메일 또는 비밀번호가 잘못되었습니다.");
             return "auth/login";
         }
 
-        // 세션에 로그인 사용자 저장
         session.setAttribute("loginUser", user);
-        model.addAttribute("loginSuccess", "로그인 성공!");
-        return "redirect:/"; // 로그인 성공 시 메인 화면
+        return "redirect:/";
     }
 
-    // 로그아웃
+    @GetMapping("/signup")
+    public String signupForm(Model model) {
+        model.addAttribute("user", new User());
+        model.addAttribute("roles", Role.values()); // Role 목록 전달
+        return "auth/signup";
+    }
+
+    @PostMapping("/signup")
+    public String signupSubmit(@ModelAttribute User user) {
+        if (user.getRole() == null) user.setRole(Role.STUDENT); // 기본값
+        userService.save(user);
+        return "redirect:/auth/login";
+    }
+
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        session.invalidate(); // 세션 초기화
+        session.invalidate();
         return "redirect:/auth/login";
     }
 }

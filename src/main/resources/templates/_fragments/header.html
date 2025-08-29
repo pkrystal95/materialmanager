@@ -10,16 +10,17 @@
     <ul>
       <li><a th:href="@{/lectures}">강의</a></li>
       <li><a th:href="@{/materials}">자료</a></li>
-      <li><a th:href="@{/favorite/my}">즐겨찾기</a></li>
       <li th:if="${session.loginUser == null}"><a th:href="@{/auth/login}">로그인</a></li>
       <li th:if="${session.loginUser == null}"><a th:href="@{/auth/signup}">회원가입</a></li>
       <li th:if="${session.loginUser != null}">
         <span th:text="${session.loginUser.name}"></span>님
+        (<span th:text="${session.loginUser.role}"></span>)
         <a th:href="@{/auth/logout}">로그아웃</a>
       </li>
     </ul>
   </nav>
   <hr>
 </header>
+
 </body>
 </html>
