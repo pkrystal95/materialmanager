@@ -2,32 +2,41 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>자료 리스트</title>
+  <title>자료 목록</title>
 </head>
 <body>
-
 <div th:replace="_fragments/header :: header"></div>
 
-<h1>자료 리스트</h1>
-<a th:href="@{/materials/form}">자료 등록</a>
+<h1>자료 목록</h1>
+
+<!-- 자료 등록 버튼 -->
+<p>
+  <a th:href="@{/materials/form}">자료 등록</a>
+</p>
 
 <table border="1">
+  <thead>
   <tr>
-    <th>ID</th>
-    <th>제목</th>
+    <th>번호</th>
+    <th>자료명</th>
     <th>강의</th>
-    <th>링크</th>
-    <th>액션</th>
+    <th>URL</th>
+    <th>삭제</th>
   </tr>
-  <tr th:each="material : ${materials}">
-    <td th:text="${material.id}"></td>
+  </thead>
+  <tbody>
+  <tr th:each="material, iterStat : ${materials}">
+    <td th:text="${iterStat.count}"></td>
     <td th:text="${material.title}"></td>
     <td th:text="${material.lecture.name}"></td>
-    <td><a th:href="${material.url}" target="_blank">자료 보기</a></td>
     <td>
-      <a th:href="@{/materials/delete/{id}(id=${material.id})}">삭제</a>
+      <a th:href="${material.url}" target="_blank">바로가기</a>
+    </td>
+    <td>
+      <a th:href="@{'/materials/delete/' + ${material.id}}">삭제</a>
     </td>
   </tr>
+  </tbody>
 </table>
 
 <div th:replace="_fragments/footer :: footer"></div>

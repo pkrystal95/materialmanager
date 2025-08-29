@@ -11,17 +11,18 @@
 <h1>자료 등록</h1>
 
 <form th:action="@{/materials/form}" th:object="${material}" method="post">
-  <p>제목: <input type="text" th:field="*{title}" required /></p>
-  <p>링크: <input type="url" th:field="*{url}" required /></p>
+  <p>자료명: <input type="text" th:field="*{title}" required /></p>
+  <p>URL: <input type="text" th:field="*{url}" required /></p>
   <p>강의:
-    <select th:field="*{lecture}">
-      <option th:each="lecture : ${lectures}"
-              th:value="${lecture}"
-              th:text="${lecture.name}"></option>
+    <select th:field="*{lecture.id}">
+      <option th:each="lec : ${lectures}"
+              th:value="${lec.id}"
+              th:text="${lec.name}"></option>
     </select>
   </p>
   <button type="submit">등록</button>
 </form>
+
 
 <div th:replace="_fragments/footer :: footer"></div>
 </body>

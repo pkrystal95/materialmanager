@@ -7,6 +7,5 @@ import java.util.List;
 
 public interface MaterialRepository extends JpaRepository<Material, Long> {
 
-    // 강의별 자료 조회
     List<Material> findByLectureId(Long lectureId);
 }
