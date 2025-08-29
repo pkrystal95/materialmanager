@@ -3,17 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <title>Material Manager - 메인</title>
-  <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 
 <!-- 헤더 포함 -->
 <div th:replace="_fragments/header :: header"></div>
 
-<h2>환영합니다!</h2>
-<p>아래 메뉴를 클릭하여 기능을 사용하세요.</p>
+<h1>메인 화면</h1>
 
-<!-- 푸터 포함 -->
+<!-- 로그인 상태 표시 -->
+<p th:if="${session.loginUser != null}">
+  환영합니다, <span th:text="${session.loginUser.name}">사용자</span>님!
+  <a th:href="@{/auth/logout}">로그아웃</a>
+</p>
+
+<p th:if="${session.loginUser == null}">
+  로그인 후 서비스를 이용할 수 있습니다.
+  <a th:href="@{/auth/login}">로그인</a>
+</p>
+
 <div th:replace="_fragments/footer :: footer"></div>
 
 </body>
