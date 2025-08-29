@@ -18,8 +18,8 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
     // 타입으로 검색
     List<Material> findByType(MaterialType type);
     
-    // 복합 검색 - 제목, 타입, 강의로 검색 (페이징 지원)
-    @Query("SELECT m FROM Material m WHERE " +
+    // 복합 검색 - 제목, 타입, 강의로 검색 (페이징 지원) with Fetch Join
+    @Query("SELECT m FROM Material m LEFT JOIN FETCH m.lecture WHERE " +
            "(:title IS NULL OR LOWER(m.title) LIKE LOWER(CONCAT('%', :title, '%'))) AND " +
            "(:type IS NULL OR m.type = :type) AND " +
            "(:lectureId IS NULL OR m.lecture.id = :lectureId)")
@@ -37,6 +37,7 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
                                            @Param("type") MaterialType type, 
                                            @Param("lectureId") Long lectureId);
     
-    // 전체 자료 페이징
+    // 전체 자료 페이징 with Fetch Join
+    @Query("SELECT m FROM Material m LEFT JOIN FETCH m.lecture")
     Page<Material> findAll(Pageable pageable);
 }

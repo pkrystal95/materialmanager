@@ -2,6 +2,8 @@ package com.example.materialmanager.controller;
 
 import com.example.materialmanager.domain.Material;
 import com.example.materialmanager.domain.MaterialType;
+import com.example.materialmanager.domain.User;
+import com.example.materialmanager.service.FavoriteService;
 import com.example.materialmanager.service.LectureService;
 import com.example.materialmanager.service.MaterialService;
 import jakarta.servlet.http.HttpSession;
@@ -15,16 +17,23 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
+
 @Controller
 @RequestMapping("/materials")
 public class MaterialController {
 
     private final MaterialService materialService;
     private final LectureService lectureService;
+    private final FavoriteService favoriteService;
 
-    public MaterialController(MaterialService materialService, LectureService lectureService) {
+    public MaterialController(MaterialService materialService, 
+                             LectureService lectureService,
+                             FavoriteService favoriteService) {
         this.materialService = materialService;
         this.lectureService = lectureService;
+        this.favoriteService = favoriteService;
     }
 
     @GetMapping
@@ -60,6 +69,18 @@ public class MaterialController {
         model.addAttribute("materials", materialPage.getContent());
         model.addAttribute("page", materialPage);
         model.addAttribute("lectures", lectureService.findAll());
+        
+        // 즐겨찾기 상태를 한 번에 조회하여 Map으로 전달
+        User loginUser = (User) session.getAttribute("loginUser");
+        if (loginUser != null) {
+            List<Long> materialIds = materialPage.getContent().stream()
+                .map(Material::getId)
+                .toList();
+            Map<Long, Boolean> favoriteMap = favoriteService.getFavoriteStatusMap(loginUser.getId(), materialIds);
+            model.addAttribute("favoriteMap", favoriteMap);
+            model.addAttribute("loginUserId", loginUser.getId());
+        }
+        
         return "material/list";
     }
     
