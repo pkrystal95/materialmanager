@@ -37,4 +37,4 @@ out/
 .vscode/
 
 ### prod
-*-prod.yml
+*-dev.yml
