@@ -6,6 +6,7 @@ import com.example.materialmanager.common.ValidationUtils;
 import com.example.materialmanager.domain.Role;
 import com.example.materialmanager.domain.User;
 import com.example.materialmanager.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -16,10 +17,12 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     // 생성자 주입
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // 전체 사용자 조회
@@ -90,11 +93,15 @@ public class UserService {
      */
     public void save(User user) {
         validateUser(user);
+        if (ValidationUtils.isBlank(user.getPassword())) {
+            throw new IllegalArgumentException("비밀번호를 입력해주세요.");
+        }
         
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new IllegalArgumentException(Constants.ERROR_EMAIL_ALREADY_EXISTS);
         }
         
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         setupUserApprovalStatus(user);
         userRepository.save(user);
     }
@@ -147,6 +154,10 @@ public class UserService {
         existingUser.setName(updatedUser.getName());
         existingUser.setEmail(updatedUser.getEmail());
         existingUser.setRole(updatedUser.getRole());
+
+        if (ValidationUtils.isNotBlank(updatedUser.getPassword())) {
+            existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+        }
         
         userRepository.save(existingUser);
     }
