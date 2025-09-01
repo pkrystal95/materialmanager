@@ -54,6 +54,9 @@
                   <option value="CODESHARE" th:selected="${param.type == 'CODESHARE'}">💻 Codeshare</option>
                   <option value="SCREENSHOT" th:selected="${param.type == 'SCREENSHOT'}">📸 스크린샷</option>
                   <option value="PRACTICE" th:selected="${param.type == 'PRACTICE'}">🛠 Gist</option>
+                  <option value="GITHUB" th:selected="${param.type == 'GITHUB'}">🐙 GitHub</option>
+                  <option value="REFERENCE" th:selected="${param.type == 'REFERENCE'}">📚 참고자료</option>
+                  <option value="OTHER" th:selected="${param.type == 'OTHER'}">📄 기타</option>
                 </select>
               </div>
               <div class="col-md-3">
@@ -145,12 +148,18 @@
                         th:class="|badge material-badge fs-6 px-3 py-2 ${material.type.name() == 'NOTION' ? 'badge-notion' :
                                   (material.type.name() == 'CODESHARE' ? 'badge-codeshare' :
                                   (material.type.name() == 'SCREENSHOT' ? 'badge-screenshot' :
-                                  (material.type.name() == 'PRACTICE' ? 'badge-practice' : 'bg-secondary')))}|">
+                                  (material.type.name() == 'PRACTICE' ? 'badge-practice' :
+                                  (material.type.name() == 'GITHUB' ? 'badge-github' :
+                                  (material.type.name() == 'REFERENCE' ? 'badge-reference' :
+                                  (material.type.name() == 'OTHER' ? 'badge-other' : 'bg-secondary'))))))}|">
                     <span th:case="'NOTION'">📝 Notion</span>
                     <span th:case="'CODESHARE'">💻 Codeshare</span>
                     <span th:case="'SCREENSHOT'">📸 스크린샷</span>
                     <span th:case="'PRACTICE'">🛠 Gist</span>
-                    <span th:case="*">❓ 기타</span>
+                    <span th:case="'GITHUB'">🐙 GitHub</span>
+                    <span th:case="'REFERENCE'">📚 참고자료</span>
+                    <span th:case="'OTHER'">📄 기타</span>
+                    <span th:case="*">❓ 알 수 없음</span>
                   </span>
 
               <!-- Favorite Heart Button -->
@@ -185,7 +194,7 @@
       </div>
 
       <!-- Pagination -->
-      <div th:if="${page != null}" class="d-flex justify-content-center mt-3">
+      <div th:if="${page != null and not materials.empty}" class="d-flex justify-content-center mt-3">
         <nav>
           <ul class="pagination">
             <li class="page-item" th:classappend="${page.first} ? 'disabled'">
@@ -334,6 +343,9 @@ document.addEventListener('DOMContentLoaded', function() {
   .badge-codeshare { background: linear-gradient(135deg, #28a745, #20c997) !important; }
   .badge-screenshot { background: linear-gradient(135deg, #17a2b8, #6f42c1) !important; }
   .badge-practice { background: linear-gradient(135deg, #ffc107, #fd7e14) !important; color: #212529 !important; }
+  .badge-github { background: linear-gradient(135deg, #24292e, #6f42c1) !important; }
+  .badge-reference { background: linear-gradient(135deg, #6610f2, #e83e8c) !important; }
+  .badge-other { background: linear-gradient(135deg, #6c757d, #495057) !important; }
 
   /* Lecture Info Badge */
   .lecture-badge {

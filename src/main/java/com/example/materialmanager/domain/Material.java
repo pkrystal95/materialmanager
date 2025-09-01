@@ -21,6 +21,7 @@ public class Material {
     private String title;
 
     @NotBlank(message = "URL을 입력해주세요.")
+    @Column(length = 2048)
     private String url;
 
     @Enumerated(EnumType.STRING)
@@ -29,6 +30,5 @@ public class Material {
 
     @ManyToOne
     @JoinColumn(name = "lecture_id")
-    @NotNull(message = "강의를 선택해주세요.")
     private Lecture lecture;
 }

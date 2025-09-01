@@ -120,6 +120,7 @@ public class MaterialController {
      */
     @PostMapping("/form")
     public String submit(@Valid @ModelAttribute Material material,
+                         @RequestParam(required = false) Long lectureId,
                          BindingResult bindingResult,
                          HttpSession session,
                          Model model,
@@ -136,17 +137,17 @@ public class MaterialController {
             return Constants.VIEW_MATERIALS_FORM;
         }
         
-        // 강의 유효성 검증
-        if (material.getLecture() == null || material.getLecture().getId() == null) {
-            bindingResult.rejectValue("lecture", "invalid", "강의를 선택해주세요.");
-            return Constants.VIEW_MATERIALS_FORM;
+        // 강의 유효성 검증 (선택사항)
+        if (lectureId != null) {
+            lectureService.findById(lectureId)
+                    .ifPresentOrElse(
+                            lecture -> material.setLecture(lecture),
+                            () -> bindingResult.rejectValue("lecture", "invalid", Constants.ERROR_LECTURE_NOT_FOUND)
+                    );
+        } else {
+            // 강의가 선택되지 않은 경우 null로 설정
+            material.setLecture(null);
         }
-        
-        lectureService.findById(material.getLecture().getId())
-                .ifPresentOrElse(
-                        lecture -> material.setLecture(lecture),
-                        () -> bindingResult.rejectValue("lecture", "invalid", Constants.ERROR_LECTURE_NOT_FOUND)
-                );
         
         if (bindingResult.hasErrors()) {
             return Constants.VIEW_MATERIALS_FORM;
@@ -155,7 +156,13 @@ public class MaterialController {
         try {
             materialService.save(material);
             redirectAttributes.addFlashAttribute("successMessage", "자료가 성공적으로 등록되었습니다.");
-            return Constants.REDIRECT_MATERIALS + "?lectureId=" + material.getLecture().getId();
+            
+            // 강의가 선택된 경우 해당 강의로 필터링, 그렇지 않으면 전체 목록
+            if (material.getLecture() != null) {
+                return Constants.REDIRECT_MATERIALS + "?lectureId=" + material.getLecture().getId();
+            } else {
+                return Constants.REDIRECT_MATERIALS;
+            }
         } catch (Exception e) {
             bindingResult.reject("global", "자료 등록 중 오류가 발생했습니다.");
             return Constants.VIEW_MATERIALS_FORM;

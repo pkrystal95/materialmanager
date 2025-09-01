@@ -1,139 +1,68 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="_fragments/layout :: head('자료 등록 - CLD4 Archive')">
-    <title>자료 등록 - CLD4 Archive</title>
-  </head>
-  <body class="d-flex flex-column min-vh-100">
-    <div th:replace="_fragments/layout :: header"></div>
+<head th:replace="_fragments/layout :: head('자료 등록 - CLD4 Archive')">
+  <title>자료 등록 - CLD4 Archive</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+<div th:replace="_fragments/layout :: header"></div>
 
-    <main class="container mt-4 flex-grow-1">
-      <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-          <div class="card">
-            <div class="card-header bg-white border-bottom">
-              <h1 class="h4 mb-0">
-                <i class="bi bi-file-earmark-plus"></i> 자료 등록
-              </h1>
+<main class="container mt-4 flex-grow-1">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card">
+        <div class="card-header bg-white border-bottom">
+          <h1 class="h4 mb-0">
+            <i class="bi bi-file-earmark-plus"></i> 자료 등록
+          </h1>
+        </div>
+        <div class="card-body">
+          <form th:action="@{/materials/form}" th:object="${material}" method="post">
+            
+            <div class="mb-3">
+              <label for="title" class="form-label">제목</label>
+              <input type="text" class="form-control" id="title" th:field="*{title}" placeholder="자료 제목을 입력하세요" required>
             </div>
-            <div class="card-body">
-              <form
-                th:action="@{/materials/form}"
-                th:object="${material}"
-                method="post"
-              >
-                <div class="mb-3">
-                  <label for="title" class="form-label">
-                    <i class="bi bi-card-text"></i> 제목
-                  </label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    th:class="${#fields.hasErrors('title')} ? 'form-control is-invalid' : 'form-control'"
-                    id="title"
-                    th:field="*{title}"
-                    placeholder="자료 제목을 입력하세요"
-                  />
-                  <div
-                    th:if="${#fields.hasErrors('title')}"
-                    class="invalid-feedback"
-                  >
-                    <span th:errors="*{title}">제목 오류</span>
-                  </div>
-                </div>
 
-                <div class="mb-3">
-                  <label for="url" class="form-label">
-                    <i class="bi bi-link-45deg"></i> URL
-                  </label>
-                  <input
-                    type="url"
-                    class="form-control"
-                    th:class="${#fields.hasErrors('url')} ? 'form-control is-invalid' : 'form-control'"
-                    id="url"
-                    th:field="*{url}"
-                    placeholder="https://example.com"
-                  />
-                  <div
-                    th:if="${#fields.hasErrors('url')}"
-                    class="invalid-feedback"
-                  >
-                    <span th:errors="*{url}">URL 오류</span>
-                  </div>
-                </div>
-
-                <div class="mb-3">
-                  <label for="type" class="form-label">
-                    <i class="bi bi-tags"></i> 자료 타입
-                  </label>
-                  <select
-                    th:field="*{type}"
-                    th:class="${#fields.hasErrors('type')} ? 'form-select is-invalid' : 'form-select'"
-                    id="type"
-                  >
-                    <option value="">자료 타입을 선택하세요</option>
-                    <option
-                      th:each="t : ${types}"
-                      th:value="${t}"
-                      th:selected="${t == material.type}"
-                      th:text="${t.name() == 'NOTION' ? '📝 Notion' :
-                      (t.name() == 'CODESHARE' ? '💻 Codeshare' :
-                      (t.name() == 'SCREENSHOT' ? '📸 스크린샷' :
-                      (t.name() == 'PRACTICE' ? '🛠 Gist' : t.name())))}"
-                    ></option>
-                  </select>
-
-                  <div
-                    th:if="${#fields.hasErrors('type')}"
-                    class="invalid-feedback"
-                  >
-                    <span th:errors="*{type}">타입 오류</span>
-                  </div>
-                </div>
-
-                <div class="mb-4">
-                  <label for="lecture" class="form-label">
-                    <i class="bi bi-calendar-event"></i> 강의
-                  </label>
-                  <select
-                    class="form-select"
-                    th:class="${#fields.hasErrors('lecture')} ? 'form-select is-invalid' : 'form-select'"
-                    id="lecture"
-                    th:field="*{lecture.id}"
-                  >
-                    <option value="">강의를 선택하세요</option>
-                    <option
-                      th:each="lec : ${lectures}"
-                      th:value="${lec.id}"
-                      th:text="${lec.title + ' (' + #temporals.format(lec.lectureDate, 'MM/dd') + ')'}"
-                    ></option>
-                  </select>
-                  <div
-                    th:if="${#fields.hasErrors('lecture')}"
-                    class="invalid-feedback"
-                  >
-                    <span th:errors="*{lecture}">강의 오류</span>
-                  </div>
-                </div>
-
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                  <a
-                    th:href="@{/materials}"
-                    class="btn btn-outline-primary me-md-2"
-                  >
-                    <i class="bi bi-arrow-left"></i> 취소
-                  </a>
-                  <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-check-circle"></i> 저장
-                  </button>
-                </div>
-              </form>
+            <div class="mb-3">
+              <label for="url" class="form-label">URL</label>
+              <input type="url" class="form-control" id="url" th:field="*{url}" placeholder="https://example.com" required>
             </div>
-          </div>
+
+            <div class="mb-3">
+              <label for="type" class="form-label">자료 타입</label>
+              <select th:field="*{type}" class="form-select" id="type" required>
+                <option value="">자료 타입을 선택하세요</option>
+                <option value="NOTION">📝 Notion</option>
+                <option value="CODESHARE">💻 Codeshare</option>
+                <option value="SCREENSHOT">📸 스크린샷</option>
+                <option value="PRACTICE">🛠 Gist</option>
+                <option value="GITHUB">🐙 GitHub</option>
+                <option value="REFERENCE">📚 참고자료</option>
+                <option value="OTHER">📄 기타</option>
+              </select>
+            </div>
+
+            <div class="mb-4">
+              <label for="lecture" class="form-label">강의 (선택사항)</label>
+              <select class="form-select" id="lecture" name="lectureId">
+                <option value="">강의를 선택하세요</option>
+                <option th:each="lec : ${lectures}" th:value="${lec.id}" th:text="${lec.title}">강의명</option>
+              </select>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+              <a th:href="@{/materials}" class="btn btn-secondary">취소</a>
+              <button type="submit" class="btn btn-primary">저장</button>
+            </div>
+            
+          </form>
         </div>
       </div>
-    </main>
+    </div>
+  </div>
+</main>
 
-    <div th:replace="_fragments/layout :: footer"></div>
-    <div th:replace="_fragments/layout :: scripts"></div>
-  </body>
+<div th:replace="_fragments/layout :: footer"></div>
+<div th:replace="_fragments/layout :: scripts"></div>
+</body>
 </html>

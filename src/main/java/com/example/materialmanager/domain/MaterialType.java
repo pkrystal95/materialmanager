@@ -4,5 +4,8 @@ public enum MaterialType {
     NOTION,
     CODESHARE,
     SCREENSHOT,
-    PRACTICE
+    PRACTICE,
+    GITHUB,
+    REFERENCE,
+    OTHER
 }

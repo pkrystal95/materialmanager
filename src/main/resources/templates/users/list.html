@@ -229,17 +229,17 @@
                         </small>
                       </td>
                       <td class="text-center">
-                        <div class="btn-group" role="group">
+                        <div class="btn-group user-action-buttons" role="group">
                           <a
                             th:href="@{/users/{id}(id=${user.id})}"
-                            class="btn btn-sm btn-outline-primary"
+                            class="btn btn-sm btn-outline-primary me-1"
                             title="상세보기"
                           >
                             <i class="bi bi-eye"></i>
                           </a>
                           <a
                             th:href="@{'/users/edit/' + ${user.id}}"
-                            class="btn btn-sm btn-outline-primary"
+                            class="btn btn-sm btn-outline-primary me-1"
                             title="수정"
                           >
                             <i class="bi bi-pencil"></i>
@@ -248,6 +248,7 @@
                             th:action="@{'/users/approve/' + ${user.id}}"
                             method="post"
                             th:if="${user.role.name() != 'ADMIN' and !user.approved}"
+                            class="d-inline me-1"
                           >
                             <button
                               type="submit"

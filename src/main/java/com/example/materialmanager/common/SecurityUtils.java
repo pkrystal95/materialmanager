@@ -65,4 +65,6 @@ public final class SecurityUtils {
         // 본인의 리소스에만 접근 가능
         return currentUser.getId().equals(userId);
     }
+
+
 }
